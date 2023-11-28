@@ -68,35 +68,89 @@ class LogisticRegression(LinearModel):
 
 
 class MLP(object):
-    # Q3.2b. This MLP skeleton code allows the MLP to be used in place of the
-    # linear models with no changes to the training loop or evaluation code
-    # in main().
     def __init__(self, n_classes, n_features, hidden_size):
-        # Initialize an MLP with a single hidden layer.
-        raise NotImplementedError
+        def softmax(z):
+            scores = np.exp(z - np.max(z)) # avoid overflows
+            return scores / np.sum(scores)
 
-    def predict(self, X):
-        # Compute the forward pass of the network. At prediction time, there is
-        # no need to save the values of hidden nodes, whereas this is required
-        # at training time.
-        raise NotImplementedError
+        def relu(x):
+            return np.maximum(0, x)
+
+        def cross_entropy(y_hat, y):
+            return -np.sum(y * np.log(y_hat))
+
+        self.g = relu
+        self.o = softmax
+        self.loss = cross_entropy
+
+        units = [n_features, hidden_size, n_classes]
+
+        self.W = [np.random.normal(0.1, 0.1, (units[i + 1], units[i]))
+                  for i in range(len(units) - 1)]
+        self.b = [np.zeros(units[i]) for i in range(1, len(units))]
+
+    def predict(self, x_i):
+        num_layers = len(self.W)
+        self.hs = []
+
+        for i in range(num_layers):
+            h = x_i if i == 0 else self.hs[i - 1]
+            z = self.W[i].dot(h) + self.b[i]
+            if i < num_layers - 1:
+                self.hs += [self.g(z)]
+
+        self.y_i_hat = self.o(z)
+
+        return self.y_i_hat
+
+    def backward(self, x_i, y_i):
+        self.grad_w = []
+        self.grad_b = []
+
+        for i in range(len(self.W) - 1, -1, -1):
+            h = x_i if i == 0 else self.hs[i - 1]
+            if i == len(self.W) - 1:
+                grad_z = self.y_i_hat - y_i
+            else:
+                relu_dx = np.array([k >= 0 for k in self.hs[i - 1]])
+                grad_z = self.W[i + 1].T.dot(grad_z) * relu_dx
+
+            self.grad_w += [np.outer(grad_z, h)]
+            self.grad_b += [grad_z]
+
+        self.grad_w.reverse()
+        self.grad_b.reverse()
+
+    def update_weights(self, learning_rate):
+        for i in range(len(self.W)):
+            self.W[i] -= learning_rate * self.grad_w[i]
+            self.b[i] -= learning_rate * self.grad_b[i]
 
     def evaluate(self, X, y):
         """
         X (n_examples x n_features)
         y (n_examples): gold labels
         """
-        # Identical to LinearModel.evaluate()
-        y_hat = self.predict(X)
-        n_correct = (y == y_hat).sum()
+        n_correct = 0
         n_possible = y.shape[0]
+
+        for x_i, y_i in zip(X, y):
+            y_i_hat = self.predict(x_i)
+            n_correct += np.argmax(y_i_hat) == y_i
+
         return n_correct / n_possible
 
     def train_epoch(self, X, y, learning_rate=0.001):
-        """
-        Dont forget to return the loss of the epoch.
-        """
-        raise NotImplementedError
+        for x_i, y_i in zip(X, y):
+            y_i_hat = self.predict(x_i)
+
+            y_i_one_hot = np.zeros(y_i_hat.shape)
+            y_i_one_hot[y_i] = 1
+
+            self.backward(x_i, y_i_one_hot)
+            self.update_weights(learning_rate)
+
+        return self.loss(y_i_hat, y_i_one_hot)
 
 
 def plot(epochs, train_accs, val_accs):
