@@ -1,0 +1,240 @@
+\documentclass[12pt]{article}
+\usepackage[paper=letterpaper,margin=2cm]{geometry}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{amsfonts}
+\usepackage{newtxtext, newtxmath}
+\usepackage{enumitem}
+\usepackage{titling}
+\usepackage[colorlinks=true]{hyperref}
+\usepackage{multirow}
+\usepackage{svg}
+\usepackage{listings}
+\usepackage{xcolor}
+\usepackage{float}
+
+\setlength{\droptitle}{-6em}
+
+\definecolor{codegreen}{rgb}{0,0.6,0}
+\definecolor{codegray}{rgb}{0.5,0.5,0.5}
+\definecolor{codepurple}{rgb}{0.58,0,0.82}
+\definecolor{backcolour}{rgb}{0.95,0.95,0.92}
+
+\lstdefinestyle{mystyle}{
+    basicstyle=\ttfamily\footnotesize,
+    breakatwhitespace=false,
+    breaklines=true,
+    captionpos=b,
+    commentstyle=\color{codegreen},
+    keepspaces=true,
+    keywordstyle=\color{magenta},
+    numbers=left,
+    numbersep=5pt,
+    numberstyle=\tiny\color{codegray},
+    showspaces=false,
+    showstringspaces=false,
+    showtabs=false,
+    stringstyle=\color{codepurple},
+    tabsize=4
+}
+
+\lstset{style=mystyle}
+
+\title{\large{Deep Learning 2023}\vskip 0.2cm Homework 1 -- Group 48}
+\date{}
+\author{Miguel Vale (99113) \and Pedro Lobo (99115)}
+\begin{document}
+\maketitle
+\center\large{\vskip -1.0cm\textbf{Question 1}}
+\center\textbf{Medical image classification with linear classifiers and neural networks}
+\begin{enumerate}[leftmargin=\labelsep]
+
+    \item
+          \begin{enumerate}[label=\alph*)]
+
+              \item \textit{Implement the \texttt{update\_weights} method of the \texttt{Perceptron} class in \texttt{hw1-q1.py}. Then train 20 epochs of the perceptron on the training set and report its performance on the training, validation and test sets. Plot the train and validation accuracies as a function of the epoch number.}
+
+                    \vspace{12pt}
+
+                    During the weight update of a multi-class perceptron, given a training example $(x_n, y_n)$, the model begins by predicting the class for $x_n$ in the following way:
+
+                    \begin{equation}
+                        \hat{y}_n = \arg\max_{y \in \mathcal{Y}} \left\{ \mathbf{w}_y^T \mathbf{x}_n \right\}
+                    \end{equation}
+
+                    \vspace{12pt}
+
+                    If the prediction is correct, i.e. $\hat{y}_n = y_n$, the weights are not updated. Otherwise, the weights are updated as follows:
+
+                    \begin{equation}
+                        \begin{aligned}
+                            \mathbf{w}_{y_n}       & \leftarrow \mathbf{w}_{y_n} + \mathbf{x}_n       \\
+                            \mathbf{w}_{\hat{y_n}} & \leftarrow \mathbf{w}_{\hat{y_n}} - \mathbf{x}_n
+                        \end{aligned}
+                    \end{equation}
+
+                    \vspace{12pt}
+
+                    The implementation of the \texttt{update\_weights} method is shown below:
+
+                    \begin{lstlisting}[language=Python]
+def update_weights(self, x, y):
+    raise NotImplementedError\end{lstlisting}
+
+                    \vspace{12pt}
+
+              \item \textit{Repeat the same exercise using logistic regression instead (without regularization), using stochastic gradient descent as your training algorithm.  Report the final test accuracies and compare, based on the plots of the train and validation accuracies, the models obtained using two different learning rates of $\eta$ = 0.01 and $\eta$ = 0.001.}
+
+                    \vspace{12pt}
+
+                    During the weight update of a logistic regression model, given a training example $(x_n, y_n)$, the model begins by calculating the probability distribution over the classes for $x_n$ in the following way:
+
+                    \begin{equation}
+                        \hat{y}_n = P(y_n | x_n) = \frac{\exp \left\{ \mathbf{w}_y^T \mathbf{x}_n \right\}}{\sum\limits_{y' \in \mathcal{Y}} \exp \left\{ \mathbf{w}_{y'}^T \mathbf{x}_n \right\}}
+                    \end{equation}
+
+                    \vspace{12pt}
+
+                    The computation of gradient of the loss function with respect to the weights yields the following result:
+
+                    \begin{equation}
+                        \begin{gathered}
+                            \nabla L(\mathbf{W}; (x_n, y_n)) = \left(\begin{bmatrix}
+                                P_W(1 | x_n) \\
+                                \vdots       \\
+                                P_W(|\mathcal{Y}| | x_n)
+                            \end{bmatrix} - e_{y_n} \right) x^T \\
+                            \text{where } e_{y_n} \text{ is the one-hot encoding of } y_n
+                        \end{gathered}
+                    \end{equation}
+
+                    \vspace{12pt}
+                    The stochastic gradient descent algorithm is used to train the model. The weights are updated after each training example, according to the following formula:
+
+                    \begin{equation}
+                        \begin{aligned}
+                            \mathbf{w} & \leftarrow \mathbf{w} - \eta \nabla L(\mathbf{w}; (x_n, y_n))            \\
+                            \mathbf{w} & \leftarrow \mathbf{w} - \eta \left(\begin{bmatrix}
+                                                                                P_W(1 | x_n) \\
+                                                                                \cdots       \\
+                                                                                P_W(|\mathcal{Y}| | x_n)
+                                                                            \end{bmatrix} - e_{y_n} \right) x_n^T
+                        \end{aligned}
+                    \end{equation}
+
+                    \vspace{12pt}
+
+                    The implementation of the \texttt{update\_weights} method is shown below:
+
+                    \begin{lstlisting}[language=Python]
+def update_weight(self, x_i, y_i, learning_rate):
+    def softmax(z):
+        return np.exp(z) / np.sum(np.exp(z))
+
+    y_i_hat = softmax(self.W.dot(x_i))
+
+    y_i_one_hot = np.zeros(y_i_hat.shape)
+    y_i_one_hot[y_i] = 1
+
+    self.W -= learning_rate * np.outer(y_i_hat - y_i_one_hot, x_i)\end{lstlisting}
+
+                    \vspace{12pt}
+
+                    For a learning rate of $\eta = 0.01$, the resulting test accuracy is 0.5784, while for a learning rate of $\eta = 0.001$, the obtained test accuracy is 0.5936. The train and validation accuracies for $\eta = 0.01$ and $\eta = 0.001$ are depicted in Figures \ref{fig:logistic-50-0.01} and \ref{fig:logistic-50-0.001}, respectively.
+
+                    \begin{figure}[H]
+                        \centering
+                        \includesvg[width=0.8\textwidth]{./1/report/assets/q1-logistic-50-0.01.svg}
+                        \caption{Logistic regression accuracies as a function of the epoch number for $\eta = 0.01$.}
+                        \label{fig:logistic-50-0.01}
+                    \end{figure}
+
+                    \begin{figure}[H]
+                        \centering
+                        \includesvg[width=0.8\textwidth]{./1/report/assets/q1-logistic-50-0.001.svg}
+                        \caption{Logistic regression accuracies as a function of the epoch number for $\eta = 0.001$.}
+                        \label{fig:logistic-50-0.001}
+                    \end{figure}
+
+          \end{enumerate}
+
+    \item
+
+          \begin{enumerate}[label=\alph*)]
+
+              \item \textit{Comment the following claim: “A logistic regression model using pixel values
+                        as features is not as expressive as a multi-layer perceptron using ReLU activations.
+                        However, training a logistic regression model is easier because it is a convex optimization
+                        problem.” Is this true of false? Justify.}
+
+                    \vspace{12pt}
+
+              \item \textit{Without using any neural network toolkit, implement a multi-layer
+                        perceptron with a single hidden layer to solve this problem, including the gradient
+                        backpropagation algorithm which is needed to train the model. Use 200 hidden units,
+                        a ReLU activation function for the hidden layers, and a multinomial logistic loss (also
+                        called cross-entropy) in the output layer (even though we are dealing with a binary
+                        classification this will allow you to use the same code for a multi-class problem). Don’t
+                        forget to include bias terms in your hidden units. Train the model for 20 epochs with
+                        stochastic gradient descent with a learning rate of 0.001. Initialize biases with zero
+                        vectors and values in weight matrices with $w_{ij} \sim \mathcal{N}(\mu, \sigma^2)$ with $\mu = 0.1$ and $\sigma^2 = 0.12$. Report final test accuracy and include the plots of the train loss and train and validation
+                        accuracies as a function of the epoch number.
+                    }
+
+          \end{enumerate}
+
+\end{enumerate}
+
+\vspace{12pt}
+
+\center\large{\textbf{Question 2}}
+\center\textbf{Medical image classification with an autodiff toolkit}
+
+\begin{enumerate}[leftmargin=\labelsep]
+    \item \textit{Implement a linear model with logistic regression, using stochastic gradient de-
+              scent as your training algorithm (use a batch size of 16). Train your model for 20 epochs and
+              tune the learning rate on your validation data, using the following values: $\{0.001, 0.01, 0.1\}$.
+              Report the best configuration (in terms of final validation accuracy) and plot two things: the
+              training loss and the validation accuracy, both as a function of the epoch number. Report
+              the final accuracy on the test set.}
+
+    \item \textit{Implement a feed-forward neural network using dropout regularization. Make
+              sure to include all the hyperparameters and training/model design choices shown in Table
+              1. Use the values presented in the table as default}
+
+          \begin{enumerate}[label=\alph*)]
+              \item \textit{Compare the performance of your model with batch sizes 16 and 1024 with
+                        the remaining hyperparameters at their default value. Plot the train and validation
+                        losses for both, report the best test accuracy and comment on the differences in both
+                        performance and time of execution.}
+
+              \item \textit{Train the model with learning rates: 1,0.1,0.01 and 0.001 with the remaining
+                        hyperparameters at their default value. Plot the train and validation losses for the best
+                        and worst configurations in terms of validation accuracy, report the best test accuracy
+                        and comment on the differences in performance.}
+
+              \item \textit{Using a batch size of 256 run the default model for 150 epochs. Is there
+                        overfitting?
+                        Train two similar models with the following changes: one with the L2
+                        regularization parameter set to 0.0001 and the other with a dropout probability of 0.2.
+                        Plot the train and validation losses for the best and worst configuration in terms of
+                        validation accuracy, report the best test accuracy and comment on the differences of
+                        both techniques.}
+          \end{enumerate}
+\end{enumerate}
+
+\center\large{\textbf{Question 3}}
+
+\begin{enumerate}[leftmargin=\labelsep]
+    \item \textit{}
+
+          \begin{enumerate}[label=\alph*)]
+              \item \textit{}
+
+              \item \textit{}
+
+              \item \textit{}
+          \end{enumerate}
+\end{enumerate}
+
+\end{document}
