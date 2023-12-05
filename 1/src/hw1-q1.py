@@ -39,15 +39,23 @@ class LinearModel(object):
 
 
 class Perceptron(LinearModel):
+    
     def update_weight(self, x_i, y_i, **kwargs):
         """
         x_i (n_features): a single training example
         y_i (scalar): the gold label for that example
         other arguments are ignored
         """
+        
+        z = np.dot(self.W, x_i)
+        e_z = np.argmax(z)
+        
+        if e_z != y_i:
+            self.W[y_i] += x_i 
+            self.W[e_z] -= x_i
+        
         # Q1.1a
-        raise NotImplementedError
-
+        return self.W
 
 class LogisticRegression(LinearModel):
     def update_weight(self, x_i, y_i, learning_rate):
@@ -224,7 +232,7 @@ def main():
                 train_y,
                 learning_rate=opt.learning_rate
             )
-
+        
         train_accs.append(model.evaluate(train_X, train_y))
         valid_accs.append(model.evaluate(dev_X, dev_y))
         if opt.model == 'mlp':
