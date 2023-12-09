@@ -1,0 +1,9 @@
+*.aux
+*.fdb_latexmk
+*.fls
+*.gz
+*.log
+*.npz
+*.out
+__pycache__/
+svg-inkscape/
