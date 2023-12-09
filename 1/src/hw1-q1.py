@@ -39,23 +39,19 @@ class LinearModel(object):
 
 
 class Perceptron(LinearModel):
-    
+
     def update_weight(self, x_i, y_i, **kwargs):
         """
         x_i (n_features): a single training example
         y_i (scalar): the gold label for that example
         other arguments are ignored
         """
-        
-        z = np.dot(self.W, x_i)
-        e_z = np.argmax(z)
-        
-        if e_z != y_i:
-            self.W[y_i] += x_i 
-            self.W[e_z] -= x_i
-        
-        # Q1.1a
-        return self.W
+        y_i_hat = np.argmax(self.W.dot(x_i))
+
+        if y_i_hat != y_i:
+            self.W[y_i, :] += x_i
+            self.W[y_i_hat, :] -= x_i
+
 
 class LogisticRegression(LinearModel):
     def update_weight(self, x_i, y_i, learning_rate):
