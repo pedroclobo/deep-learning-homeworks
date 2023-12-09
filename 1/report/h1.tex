@@ -12,6 +12,8 @@
 \usepackage{listings}
 \usepackage{xcolor}
 \usepackage{float}
+\usepackage{graphicx}
+\usepackage{subcaption}
 
 \setlength{\droptitle}{-6em}
 
@@ -78,8 +80,23 @@
                     The implementation of the \texttt{update\_weights} method is shown below:
 
                     \begin{lstlisting}[language=Python]
-def update_weights(self, x, y):
-    raise NotImplementedError\end{lstlisting}
+def update_weight(self, x_i, y_i, **kwargs):
+    y_i_hat = np.argmax(self.W.dot(x_i))
+    
+    if y_i_hat != y_i:
+        self.W[y_i, :] += x_i 
+        self.W[y_i_hat, :] -= x_i\end{lstlisting}
+
+                    \vspace{12pt}
+
+                    The resulting test accuracy for the perceptron is 0.3422. The train and validation accuracies are depicted in Figure \ref{fig:perceptron-20}.
+
+                    \begin{figure}[H]
+                        \centering
+                        \includesvg[width=0.8\textwidth]{./1/report/assets/q1-perceptron-20-1.0.svg}
+                        \caption{Perceptron train and testing accuracies as a function of the epoch number.}
+                        \label{fig:perceptron-20-1.0}
+                    \end{figure}
 
                     \vspace{12pt}
 
@@ -109,7 +126,7 @@ def update_weights(self, x, y):
                     \end{equation}
 
                     \vspace{12pt}
-                    The stochastic gradient descent algorithm is used to train the model. The weights are updated after each training example, according to the following formula:
+                    The stochastic gradient descent algorithm is used to train the model. The weights are updated after each training example, according to the following equation:
 
                     \begin{equation}
                         \begin{aligned}
@@ -140,20 +157,20 @@ def update_weight(self, x_i, y_i, learning_rate):
 
                     \vspace{12pt}
 
-                    For a learning rate of $\eta = 0.01$, the resulting test accuracy is 0.5784, while for a learning rate of $\eta = 0.001$, the obtained test accuracy is 0.5936. The train and validation accuracies for $\eta = 0.01$ and $\eta = 0.001$ are depicted in Figures \ref{fig:logistic-50-0.01} and \ref{fig:logistic-50-0.001}, respectively.
+                    For a learning rate of $\eta = 0.01$, the resulting test accuracy is 0.5784, while for a learning rate of $\eta = 0.001$, the obtained test accuracy is 0.5936. The train and validation accuracies for $\eta = 0.01$ and $\eta = 0.001$ are depicted in Figures \ref{fig:logistic_regression-50-0.01} and \ref{fig:logistic_regression-50-0.001}, respectively.
 
                     \begin{figure}[H]
                         \centering
-                        \includesvg[width=0.8\textwidth]{./1/report/assets/q1-logistic-50-0.01.svg}
-                        \caption{Logistic regression accuracies as a function of the epoch number for $\eta = 0.01$.}
-                        \label{fig:logistic-50-0.01}
+                        \includesvg[width=0.75\textwidth]{./1/report/assets/q1-logistic_regression-50-0.01.svg}
+                        \caption{Logistic regression train and validation accuracies as a function of the epoch number for $\eta = 0.01$.}
+                        \label{fig:logistic_regression-50-0.01}
                     \end{figure}
 
                     \begin{figure}[H]
                         \centering
-                        \includesvg[width=0.8\textwidth]{./1/report/assets/q1-logistic-50-0.001.svg}
-                        \caption{Logistic regression accuracies as a function of the epoch number for $\eta = 0.001$.}
-                        \label{fig:logistic-50-0.001}
+                        \includesvg[width=0.75\textwidth]{./1/report/assets/q1-logistic_regression-50-0.001.svg}
+                        \caption{Logistic regression training and validation accuracies as a function of the epoch number for $\eta = 0.001$.}
+                        \label{fig:logistic_regression-50-0.001}
                     \end{figure}
 
           \end{enumerate}
@@ -169,17 +186,75 @@ def update_weight(self, x_i, y_i, learning_rate):
 
                     \vspace{12pt}
 
+                    The claim is correct. The following paragraphs address the expressiveness of the models and their optimization problems. \\
+
+                    \vspace{12pt}
+
+                    A multi-layer perceptron using ReLU activations is more expressive than a logistic regression model as its hidden layers have a non-linear activation which allows the model to learn more complex representations of the input. This more complex representations can turn the input into a linearly separable dataset, that can be learned by the output layer. A logistic regression model can only learn linearly separable datasets, as its output layer is a linear function of the input.
+
+                    \vspace{12pt}
+
+                    Despite being more expressive, a multi-layer perceptron using ReLU activations is harder to train than a logistic regression model. This is due to the fact that the optimization problem of the former is non-convex, while the optimization problem of the latter is convex. This means that the optimization problem of a logistic regression model has a single global minimum, while the optimization problem of a multi-layer perceptron using ReLU activations has multiple local minima. While training the multi-layer perceptron with a gradient descent algorithm, the model can get \textit{stuck} on a local minimum. This makes it harder to find the optimal solution for the latter model.
+
+                    \vspace{12pt}
+
+                    To learn the weights \textbf{W} of a logistic regression model, the conditional log-likelihood of the training data is maximized, which yields the following optimization problem:
+
+                    \begin{equation}
+                        \begin{aligned}
+                            L(W) & = \arg\min_{W} \left(\log \prod_{i=1}^N P(y_i | x_i; W) \right)                               \\
+                                 & = \arg\min_{W} \left( \sum_{i=1}^N y_i w_i^T x_i - \log \sum_{i=1}^N \exp (w_i^T x_i) \right)
+                        \end{aligned}
+                    \end{equation}
+
+                    \vspace{12pt}
+
+                    Computing the gradient with respect to \textbf{W} yields the following result:
+
+                    \begin{equation}
+                        \frac{\delta L(W)}{\delta W} = \sum_{i=1}^N \left( y_i x_i - \frac{\exp (w_i^T x_i)}{\sum\limits_{i'=1}^N \exp (w_{i'}^T x_i)} x_i \right)
+                    \end{equation}
+
+                    \vspace{12pt}
+
+                    Computing the hessian matrix of the loss function gives the following result.
+
+                    \vspace{12pt}
+
+                    \begin{equation}
+                        \frac{\delta^2 L(W)}{\delta W^2} = - \sum_{i=1}^N \left( \frac{\exp (w_i^T x_i)}{\sum\limits_{i'=1}^N \exp (w_{i'}^T x_i)} x_i x_i^T \right)
+                    \end{equation}
+
+                    \vspace{12pt}
+
+                    As the hessian matrix is positive semi-definite, the objective function is convex. This means that the optimization problem has a single global minimum.
+
+                    \vspace{12pt}
+
               \item \textit{Without using any neural network toolkit, implement a multi-layer
-                        perceptron with a single hidden layer to solve this problem, including the gradient
-                        backpropagation algorithm which is needed to train the model. Use 200 hidden units,
-                        a ReLU activation function for the hidden layers, and a multinomial logistic loss (also
-                        called cross-entropy) in the output layer (even though we are dealing with a binary
-                        classification this will allow you to use the same code for a multi-class problem). Don’t
-                        forget to include bias terms in your hidden units. Train the model for 20 epochs with
-                        stochastic gradient descent with a learning rate of 0.001. Initialize biases with zero
-                        vectors and values in weight matrices with $w_{ij} \sim \mathcal{N}(\mu, \sigma^2)$ with $\mu = 0.1$ and $\sigma^2 = 0.12$. Report final test accuracy and include the plots of the train loss and train and validation
-                        accuracies as a function of the epoch number.
+                    perceptron with a single hidden layer to solve this problem, including the gradient
+                    backpropagation algorithm which is needed to train the model. Use 200 hidden units,
+                    a ReLU activation function for the hidden layers, and a multinomial logistic loss (also
+                    called cross-entropy) in the output layer (even though we are dealing with a binary
+                    classification this will allow you to use the same code for a multi-class problem). Don’t
+                    forget to include bias terms in your hidden units. Train the model for 20 epochs with
+                    stochastic gradient descent with a learning rate of 0.001. Initialize biases with zero
+                    vectors and values in weight matrices with $w_{ij} \sim \mathcal{N}(\mu, \sigma^2)$ with $\mu = 0.1$ and $\sigma^2 = {0.1}^2$. Report final test accuracy and include the plots of the train loss and train and validation
+                    accuracies as a function of the epoch number.
                     }
+
+                    \vspace{12pt}
+
+                    For a learning rate of $\eta = 0.001$, the resulting test accuracy for the MLP is 0.6106. The correspondant train and validation accuracies are depicted in Figure \ref{fig:mlp-20-0.001}.
+
+                    \begin{figure}[H]
+                        \centering
+                        \includesvg[width=0.75\textwidth]{./1/report/assets/q1-mlp-20-0.001.svg}
+                        \caption{MLP train and validation accuracies as a function of the epoch number for $\eta = 0.001$.}
+                        \label{fig:mlp-20-0.001}
+                    \end{figure}
+
+                    \vspace{12pt}
 
           \end{enumerate}
 
@@ -191,12 +266,70 @@ def update_weight(self, x_i, y_i, learning_rate):
 \center\textbf{Medical image classification with an autodiff toolkit}
 
 \begin{enumerate}[leftmargin=\labelsep]
-    \item \textit{Implement a linear model with logistic regression, using stochastic gradient de-
-              scent as your training algorithm (use a batch size of 16). Train your model for 20 epochs and
-              tune the learning rate on your validation data, using the following values: $\{0.001, 0.01, 0.1\}$.
-              Report the best configuration (in terms of final validation accuracy) and plot two things: the
-              training loss and the validation accuracy, both as a function of the epoch number. Report
-              the final accuracy on the test set.}
+    \item \textit{Implement a linear model with logistic regression, using stochastic gradient descent as your training algorithm (use a batch size of 16). Train your model for 20 epochs and tune the learning rate on your validation data, using the following values: $\{0.001, 0.01, 0.1\}$.  Report the best configuration (in terms of final validation accuracy) and plot two things: the training loss and the validation accuracy, both as a function of the epoch number. Report the final accuracy on the test set.}
+
+          \vspace{12pt}
+
+          The best configuration, in term of final validation accuracy, is $\eta = 0.001$, as shown in Table \ref{tab:logistic_regression-20}.
+
+          \begin{table}[H]
+              \centering
+              \begin{tabular}{|c|c|}
+                  \hline
+                  Learning rate & Validation accuracy \\ \hline
+                  0.001         & 0.6503              \\ \hline
+                  0.01          & 0.6200              \\ \hline
+                  0.1           & 0.5577              \\ \hline
+              \end{tabular}
+              \caption{Final logistic regression validation accuracy for each learning rate.}
+              \label{tab:logistic_regression-20}
+          \end{table}
+
+          The traning loss and validation accuracy plots for a learning rate of $\eta = 0.001$, $\eta = 0.01$ and $\eta = 0.1$ are depicted in Figures \ref{fig:q2-logistic_regression-training-loss-batch-16-lr-0.001-epochs-20-l2-0.0-opt-sgd}, \ref{fig:q2-logistic_regression-validation-accuracy-batch-16-lr-0.001-epochs-20-l2-0.0-opt-sgd}, \ref{fig:q2-logistic_regression-training-loss-batch-16-lr-0.01-epochs-20-l2-0.0-opt-sgd}, \ref{fig:q2-logistic_regression-validation-accuracy-batch-16-lr-0.01-epochs-20-l2-0.0-opt-sgd}, \ref{fig:q2-logistic_regression-training-loss-batch-16-lr-0.1-epochs-20-l2-0.0-opt-sgd} and \ref{fig:q2-logistic_regression-validation-accuracy-batch-16-lr-0.1-epochs-20-l2-0.0-opt-sgd}, respectively.
+
+          \begin{figure}[H]
+              \centering
+              \includesvg[width=0.75\textwidth]{./1/report/assets/q2-logistic_regression-training-loss-batch-16-lr-0.001-epochs-20-l2-0.0-opt-sgd}
+              \caption{Logistic regression training loss for a learning rate of $\eta = 0.001$.}
+              \label{fig:q2-logistic_regression-training-loss-batch-16-lr-0.001-epochs-20-l2-0.0-opt-sgd}
+          \end{figure}
+
+          \begin{figure}[H]
+              \centering
+              \includesvg[width=0.75\textwidth]{./1/report/assets/q2-logistic_regression-validation-accuracy-batch-16-lr-0.001-epochs-20-l2-0.0-opt-sgd}
+              \caption{Logistic regression validation accuracy for a learning rate of $\eta = 0.001$.}
+              \label{fig:q2-logistic_regression-validation-accuracy-batch-16-lr-0.001-epochs-20-l2-0.0-opt-sgd}
+          \end{figure}
+
+          \begin{figure}[H]
+              \centering
+              \includesvg[width=0.75\textwidth]{./1/report/assets/q2-logistic_regression-training-loss-batch-16-lr-0.01-epochs-20-l2-0.0-opt-sgd}
+              \caption{Logistic regression training loss for a learning rate of $\eta = 0.01$.}
+              \label{fig:q2-logistic_regression-training-loss-batch-16-lr-0.01-epochs-20-l2-0.0-opt-sgd}
+          \end{figure}
+
+          \begin{figure}[H]
+              \centering
+              \includesvg[width=0.75\textwidth]{./1/report/assets/q2-logistic_regression-validation-accuracy-batch-16-lr-0.01-epochs-20-l2-0.0-opt-sgd}
+              \caption{Logistic regression validation accuracy for a learning rate of $\eta = 0.01$.}
+              \label{fig:q2-logistic_regression-validation-accuracy-batch-16-lr-0.01-epochs-20-l2-0.0-opt-sgd}
+          \end{figure}
+
+          \begin{figure}[H]
+              \centering
+              \includesvg[width=0.75\textwidth]{./1/report/assets/q2-logistic_regression-training-loss-batch-16-lr-0.1-epochs-20-l2-0.0-opt-sgd}
+              \caption{Logistic regression training loss for a learning rate of $\eta = 0.1$.}
+              \label{fig:q2-logistic_regression-training-loss-batch-16-lr-0.1-epochs-20-l2-0.0-opt-sgd}
+          \end{figure}
+
+          \begin{figure}[H]
+              \centering
+              \includesvg[width=0.75\textwidth]{./1/report/assets/q2-logistic_regression-validation-accuracy-batch-16-lr-0.1-epochs-20-l2-0.0-opt-sgd}
+              \caption{Logistic regression validation accuracy for a learning rate of $\eta = 0.1$.}
+              \label{fig:q2-logistic_regression-validation-accuracy-batch-16-lr-0.1-epochs-20-l2-0.0-opt-sgd}
+          \end{figure}
+
+          \vspace{12pt}
 
     \item \textit{Implement a feed-forward neural network using dropout regularization. Make
               sure to include all the hyperparameters and training/model design choices shown in Table
@@ -208,10 +341,110 @@ def update_weight(self, x_i, y_i, learning_rate):
                         losses for both, report the best test accuracy and comment on the differences in both
                         performance and time of execution.}
 
-              \item \textit{Train the model with learning rates: 1,0.1,0.01 and 0.001 with the remaining
+                    \vspace{12pt}
+
+                    The configuration with a batch size of 16 has the best final testing accuracy, as shown in Table \ref{tab:mlp-batch-size-accuracy}.
+
+                    \vspace{12pt}
+
+                    \begin{table}[H]
+                        \centering
+                        \begin{tabular}{|c|c|}
+                            \hline
+                            Batch size & Test accuracy \\ \hline
+                            16         & 0.7713        \\ \hline
+                            1024       & 0.7202        \\ \hline
+                        \end{tabular}
+                        \caption{Final MLP test accuracy for each batch size.}
+                        \label{tab:mlp-batch-size-accuracy}
+                    \end{table}
+
+                    The configuration with a batch size of 1024 takes less time to train, as shown in Table \ref{tab:mlp-batch-size-time}.
+
+                    \vspace{12pt}
+
+                    \begin{table}[H]
+                        \centering
+                        \begin{tabular}{|c|c|}
+                            \hline
+                            Batch size & Time (seconds) \\ \hline
+                            16         & 242            \\ \hline
+                            1024       & 67             \\ \hline
+                        \end{tabular}
+                        \caption{Training time of the MLP for each batch size.}
+                        \label{tab:mlp-batch-size-time}
+                    \end{table}
+
+                    \vspace{12pt}
+
+              \item \textit{Train the model with learning rates: 1, 0.1, 0.01 and 0.001 with the remaining
                         hyperparameters at their default value. Plot the train and validation losses for the best
                         and worst configurations in terms of validation accuracy, report the best test accuracy
                         and comment on the differences in performance.}
+
+                    \vspace{12pt}
+
+                    The best and worst configuration, with regard to the testing accuracy, are $\eta = 1$ and $\eta = 0.1$, respectively, as shown in Table \ref{tab:mlp-learning-rate-accuracy}.
+
+                    \begin{table}[H]
+                        \centering
+                        \begin{tabular}{|c|c|}
+                            \hline
+                            Learning rate & Testing accuracy \\ \hline
+                            1             & 0.4726           \\ \hline
+                            0.1           & 0.7713           \\ \hline
+                            0.01          & 0.7543           \\ \hline
+                            0.001         & 0.6900           \\ \hline
+                        \end{tabular}
+                        \caption{Testing accuracy of the MLP for each learning rate.}
+                        \label{tab:mlp-learning-rate-accuracy}
+                    \end{table}
+
+                    The train and validations losses for the configurations with $\eta = 1$ and $\eta = 0.1$ are depicted in Figures \ref{fig:q2-mlp-training-loss-batch-16-lr-1.0-epochs-20-l2-0.0-opt-sgd}, \ref{fig:q2-mlp-validation-accuracy-batch-16-lr-1.0-epochs-20-l2-0.0-opt-sgd}, \ref{fig:q2-mlp-training-loss-batch-16-lr-0.1-epochs-20-l2-0.0-opt-sgd} and \ref{fig:q2-mlp-validation-accuracy-batch-16-lr-0.1-epochs-20-l2-0.0-opt-sgd}, respectively.
+
+                    \begin{figure}[H]
+                        \centering
+                        \includesvg[width=0.75\textwidth]{./1/report/assets/q2-mlp-training-loss-batch-16-lr-1.0-epochs-20-hidden-200-dropout-0.0-l2-0.0-layers-2-act-relu-opt-sgd}
+                        \caption{MLP training loss for a learning rate of $\eta = 1.0$.}
+                        \label{fig:q2-mlp-training-loss-batch-16-lr-1.0-epochs-20-l2-0.0-opt-sgd}
+                    \end{figure}
+
+                    \begin{figure}[H]
+                        \centering
+                        \includesvg[width=0.75\textwidth]{./1/report/assets/q2-mlp-validation-accuracy-batch-16-lr-1.0-epochs-20-hidden-200-dropout-0.0-l2-0.0-layers-2-act-relu-opt-sgd}
+                        \caption{MLP validation accuracy for a learning rate of $\eta = 1.0$.}
+                        \label{fig:q2-mlp-validation-accuracy-batch-16-lr-1.0-epochs-20-l2-0.0-opt-sgd}
+                    \end{figure}
+
+                    \begin{figure}[H]
+                        \centering
+                        \includesvg[width=0.75\textwidth]{./1/report/assets/q2-mlp-training-loss-batch-16-lr-0.1-epochs-20-hidden-200-dropout-0.0-l2-0.0-layers-2-act-relu-opt-sgd}
+                        \caption{MLP training loss for a learning rate of $\eta = 0.1$.}
+                        \label{fig:q2-mlp-training-loss-batch-16-lr-0.1-epochs-20-l2-0.0-opt-sgd}
+                    \end{figure}
+
+                    \begin{figure}[H]
+                        \centering
+                        \includesvg[width=0.75\textwidth]{./1/report/assets/q2-mlp-validation-accuracy-batch-16-lr-0.1-epochs-20-hidden-200-dropout-0.0-l2-0.0-layers-2-act-relu-opt-sgd}
+                        \caption{MLP validation accuracy for a learning rate of $\eta = 0.1$.}
+                        \label{fig:q2-mlp-validation-accuracy-batch-16-lr-0.1-epochs-20-l2-0.0-opt-sgd}
+                    \end{figure}
+
+                    The performance
+
+                    \begin{table}[H]
+                        \centering
+                        \begin{tabular}{|c|c|}
+                            \hline
+                            Learning rate & Time (seconds) \\ \hline
+                            1             & 238            \\ \hline
+                            0.1           & 201            \\ \hline
+                            0.01          & 221            \\ \hline
+                            0.01          & 235            \\ \hline
+                        \end{tabular}
+                        \caption{Training time of the MLP for each learning rate.}
+                        \label{tab:mlp-learning-rate-time}
+                    \end{table}
 
               \item \textit{Using a batch size of 256 run the default model for 150 epochs. Is there
                         overfitting?
@@ -220,16 +453,110 @@ def update_weight(self, x_i, y_i, learning_rate):
                         Plot the train and validation losses for the best and worst configuration in terms of
                         validation accuracy, report the best test accuracy and comment on the differences of
                         both techniques.}
+
+                    \vspace{12pt}
+
+                    The best and worst configuration with regard to the validation accuracy are the default model (with a batch size of 256) and the model with a dropout probability $= 0.001$, respectively, as shown in Table \ref{tab:mlp-configuration-accuracy}.
+
+                    \begin{table}[H]
+                        \centering
+                        \begin{tabular}{|c|c|}
+                            \hline
+                            Model                                & Test accuracy \\ \hline
+                            Default with batch size = 256        & 0.7713        \\ \hline
+                            L2 regularization parameter = 0.0001 & 0.7788        \\ \hline
+                            Dropout probability = 0.2            & 0.7996        \\ \hline
+                        \end{tabular}
+                        \caption{Final MLP test accuracy for one of the models.}
+                        \label{tab:mlp-configuration-accuracy}
+                    \end{table}
+
+                    The configurations differ as the default model doesn't have any regularization technique, while the model with a dropout probability of 0.2 uses dropout regularization. The random drop of certain connections forces the network to learn a more robust representation of the data, as it cannot rely on the presence of a particular unit.
+
+                    \vspace{12pt}
+
+                    The presence of a regularization technique leads to lower variations of the validation accuracy and validation loss between epochs. It also translates into a higher testing loss at the cost of a lower validation loss. As the model is more restricted in the training process, it is more capable of generalizing for unseen data. The presence of dropout reguluzation reduces overfitting.
+
+                    \vspace{12pt}
+
+                    The train and validation losses for the configurations with a batch size of 256, a L2 regularization parameter of 0.0001 and a dropout probability of 0.2 are depicted in Figures \ref{fig:q2-mlp-training-loss-batch-256-lr-0.01-epochs-150-hidden-200-dropout-0.0-l2-0.0-layers-2-act-relu-opt-sgd}, \ref{fig:q2-mlp-validation-accuracy-batch-256-lr-0.01-epochs-150-hidden-200-dropout-0.0-l2-0.0-layers-2-act-relu-opt-sgd}, \ref{fig:q2-mlp-training-loss-batch-256-lr-0.01-epochs-150-hidden-200-dropout-0.2-l2-0.0-layers-2-act-relu-opt-sgd} and \ref{fig:q2-mlp-validation-accuracy-batch-256-lr-0.01-epochs-150-hidden-200-dropout-0.2-l2-0.0-layers-2-act-relu-opt-sgd}, respectively.
+
+                    \begin{figure}[H]
+                        \centering
+                        \includesvg[width=0.75\textwidth]{./1/report/assets/q2-mlp-training-loss-batch-256-lr-0.1-epochs-150-hidden-200-dropout-0.0-l2-0.0-layers-2-act-relu-opt-sgd}
+                        \caption{MLP training loss for the default model.}
+                        \label{fig:q2-mlp-training-loss-batch-256-lr-0.01-epochs-150-hidden-200-dropout-0.0-l2-0.0-layers-2-act-relu-opt-sgd}
+                    \end{figure}
+
+                    \begin{figure}[H]
+                        \centering
+                        \includesvg[width=0.75\textwidth]{./1/report/assets/q2-mlp-validation-accuracy-batch-256-lr-0.1-epochs-150-hidden-200-dropout-0.0-l2-0.0-layers-2-act-relu-opt-sgd}
+                        \caption{MLP validation accuracy for the default model.}
+                        \label{fig:q2-mlp-validation-accuracy-batch-256-lr-0.01-epochs-150-hidden-200-dropout-0.0-l2-0.0-layers-2-act-relu-opt-sgd}
+                    \end{figure}
+
+                    \begin{figure}[H]
+                        \centering
+                        \includesvg[width=0.75\textwidth]{./1/report/assets/q2-mlp-training-loss-batch-256-lr-0.1-epochs-150-hidden-200-dropout-0.2-l2-0.0-layers-2-act-relu-opt-sgd}
+                        \caption{MLP training loss for a dropout probability of 0.2.}
+                        \label{fig:q2-mlp-training-loss-batch-256-lr-0.01-epochs-150-hidden-200-dropout-0.2-l2-0.0-layers-2-act-relu-opt-sgd}
+                    \end{figure}
+
+                    \begin{figure}[H]
+                        \centering
+                        \includesvg[width=0.75\textwidth]{./1/report/assets/q2-mlp-validation-accuracy-batch-256-lr-0.1-epochs-150-hidden-200-dropout-0.2-l2-0.0-layers-2-act-relu-opt-sgd}
+                        \caption{MLP validation accuracy for a dropout probability of 0.2.}
+                        \label{fig:q2-mlp-validation-accuracy-batch-256-lr-0.01-epochs-150-hidden-200-dropout-0.2-l2-0.0-layers-2-act-relu-opt-sgd}
+                    \end{figure}
           \end{enumerate}
 \end{enumerate}
 
 \center\large{\textbf{Question 3}}
 
 \begin{enumerate}[leftmargin=\labelsep]
-    \item \textit{}
+    \item \textit{In this exercise, you will design a multilayer perceptron to compute a Boolean function of $D$ variables, $f; \{-1, +1\}^D \mapsto \{-1, +1\}$, defined as:}
+          \begin{equation}
+              f(x) = \begin{cases}
+                  +1 & \text{if } \sum\limits_{i=1}^D x_i \geq 0 \\
+                  -1 & \text{otherwise}
+              \end{cases}
+          \end{equation}
+          \textit{where $A$ and $B$ are integers such that $-D \leq A \leq B \leq D$.}
 
           \begin{enumerate}[label=\alph*)]
-              \item \textit{}
+              \item \textit{Show that the function above cannot generally be computed with a single
+                        perceptron.}
+
+                    \vspace{12pt}
+
+                    If we consider $D$ = 2, $A$ = -1 and $B$ = 1, the function $f(x)$ is mapped into the XOR function, as suggested by the following truth table:
+
+                    \begin{table}[H]
+                        \centering
+                        \begin{tabular}{|c|c|c|c|}
+                            \hline
+                            $x_1$ & $x_2$ & $\sum\limits_{i=1}^D x_i$ & $f(x)$ \\ \hline
+                            -1    & -1    & -2                        & -1     \\ \hline
+                            -1    & 1     & 0                         & 1      \\ \hline
+                            1     & -1    & 0                         & 1      \\ \hline
+                            1     & 1     & 2                         & -1     \\ \hline
+                        \end{tabular}
+                    \end{table}
+
+                    \vspace{12pt}
+
+                    A single perceptron can only learn linearly separable functions. As the XOR function is not linearly separable, it cannot be learned by a single perceptron, as there is no hyperplane that can separate the two classes, as suggested by Figure \ref{fig:xor}.
+
+                    \begin{figure}[H]
+                        \centering
+                        \includesvg[width=0.8\textwidth]{./1/report/assets/xor.svg}
+                        \caption{Plot of function $f$ with $D$ = 2, $A$ = -1 and $B$ = 1. Red points represent the class -1, while blue points represent the class 1. The two classes are not linearly separable.}
+                        \label{fig:xor}
+                    \end{figure}
+
+                    \vspace{12pt}
+
+
 
               \item \textit{}
 
