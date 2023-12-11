@@ -58,38 +58,7 @@
 
                     \vspace{12pt}
 
-                    During the weight update of a multi-class perceptron, given a training example $(x_n, y_n)$, the model begins by predicting the class for $x_n$ in the following way:
-
-                    \begin{equation}
-                        \hat{y}_n = \arg\max_{y \in \mathcal{Y}} \left\{ \mathbf{w}_y^T \mathbf{x}_n \right\}
-                    \end{equation}
-
-                    \vspace{12pt}
-
-                    If the prediction is correct, i.e. $\hat{y}_n = y_n$, the weights are not updated. Otherwise, the weights are updated as follows:
-
-                    \begin{equation}
-                        \begin{aligned}
-                            \mathbf{w}_{y_n}       & \leftarrow \mathbf{w}_{y_n} + \mathbf{x}_n       \\
-                            \mathbf{w}_{\hat{y_n}} & \leftarrow \mathbf{w}_{\hat{y_n}} - \mathbf{x}_n
-                        \end{aligned}
-                    \end{equation}
-
-                    \vspace{12pt}
-
-                    The implementation of the \texttt{update\_weights} method is shown below:
-
-                    \begin{lstlisting}[language=Python]
-def update_weight(self, x_i, y_i, **kwargs):
-    y_i_hat = np.argmax(self.W.dot(x_i))
-    
-    if y_i_hat != y_i:
-        self.W[y_i, :] += x_i 
-        self.W[y_i_hat, :] -= x_i\end{lstlisting}
-
-                    \vspace{12pt}
-
-                    The resulting test accuracy for the perceptron is 0.3422. The train and validation accuracies are depicted in Figure \ref{fig:perceptron-20}.
+                    The resulting test accuracy for the perceptron is 0.3422. The train and validation accuracies are depicted in Figure \ref{fig:perceptron-20-1.0}.
 
                     \begin{figure}[H]
                         \centering
@@ -101,59 +70,6 @@ def update_weight(self, x_i, y_i, **kwargs):
                     \vspace{12pt}
 
               \item \textit{Repeat the same exercise using logistic regression instead (without regularization), using stochastic gradient descent as your training algorithm.  Report the final test accuracies and compare, based on the plots of the train and validation accuracies, the models obtained using two different learning rates of $\eta$ = 0.01 and $\eta$ = 0.001.}
-
-                    \vspace{12pt}
-
-                    During the weight update of a logistic regression model, given a training example $(x_n, y_n)$, the model begins by calculating the probability distribution over the classes for $x_n$ in the following way:
-
-                    \begin{equation}
-                        \hat{y}_n = P(y_n | x_n) = \frac{\exp \left\{ \mathbf{w}_y^T \mathbf{x}_n \right\}}{\sum\limits_{y' \in \mathcal{Y}} \exp \left\{ \mathbf{w}_{y'}^T \mathbf{x}_n \right\}}
-                    \end{equation}
-
-                    \vspace{12pt}
-
-                    The computation of gradient of the loss function with respect to the weights yields the following result:
-
-                    \begin{equation}
-                        \begin{gathered}
-                            \nabla L(\mathbf{W}; (x_n, y_n)) = \left(\begin{bmatrix}
-                                P_W(1 | x_n) \\
-                                \vdots       \\
-                                P_W(|\mathcal{Y}| | x_n)
-                            \end{bmatrix} - e_{y_n} \right) x^T \\
-                            \text{where } e_{y_n} \text{ is the one-hot encoding of } y_n
-                        \end{gathered}
-                    \end{equation}
-
-                    \vspace{12pt}
-                    The stochastic gradient descent algorithm is used to train the model. The weights are updated after each training example, according to the following equation:
-
-                    \begin{equation}
-                        \begin{aligned}
-                            \mathbf{w} & \leftarrow \mathbf{w} - \eta \nabla L(\mathbf{w}; (x_n, y_n))            \\
-                            \mathbf{w} & \leftarrow \mathbf{w} - \eta \left(\begin{bmatrix}
-                                                                                P_W(1 | x_n) \\
-                                                                                \cdots       \\
-                                                                                P_W(|\mathcal{Y}| | x_n)
-                                                                            \end{bmatrix} - e_{y_n} \right) x_n^T
-                        \end{aligned}
-                    \end{equation}
-
-                    \vspace{12pt}
-
-                    The implementation of the \texttt{update\_weights} method is shown below:
-
-                    \begin{lstlisting}[language=Python]
-def update_weight(self, x_i, y_i, learning_rate):
-    def softmax(z):
-        return np.exp(z) / np.sum(np.exp(z))
-
-    y_i_hat = softmax(self.W.dot(x_i))
-
-    y_i_one_hot = np.zeros(y_i_hat.shape)
-    y_i_one_hot[y_i] = 1
-
-    self.W -= learning_rate * np.outer(y_i_hat - y_i_one_hot, x_i)\end{lstlisting}
 
                     \vspace{12pt}
 
@@ -195,39 +111,6 @@ def update_weight(self, x_i, y_i, learning_rate):
                     \vspace{12pt}
 
                     Despite being more expressive, a multi-layer perceptron using ReLU activations is harder to train than a logistic regression model. This is due to the fact that the optimization problem of the former is non-convex, while the optimization problem of the latter is convex. This means that the optimization problem of a logistic regression model has a single global minimum, while the optimization problem of a multi-layer perceptron using ReLU activations has multiple local minima. While training the multi-layer perceptron with a gradient descent algorithm, the model can get \textit{stuck} on a local minimum. This makes it harder to find the optimal solution for the latter model.
-
-                    \vspace{12pt}
-
-                    To learn the weights \textbf{W} of a logistic regression model, the conditional log-likelihood of the training data is maximized, which yields the following optimization problem:
-
-                    \begin{equation}
-                        \begin{aligned}
-                            L(W) & = \arg\min_{W} \left(\log \prod_{i=1}^N P(y_i | x_i; W) \right)                               \\
-                                 & = \arg\min_{W} \left( \sum_{i=1}^N y_i w_i^T x_i - \log \sum_{i=1}^N \exp (w_i^T x_i) \right)
-                        \end{aligned}
-                    \end{equation}
-
-                    \vspace{12pt}
-
-                    Computing the gradient with respect to \textbf{W} yields the following result:
-
-                    \begin{equation}
-                        \frac{\delta L(W)}{\delta W} = \sum_{i=1}^N \left( y_i x_i - \frac{\exp (w_i^T x_i)}{\sum\limits_{i'=1}^N \exp (w_{i'}^T x_i)} x_i \right)
-                    \end{equation}
-
-                    \vspace{12pt}
-
-                    Computing the hessian matrix of the loss function gives the following result.
-
-                    \vspace{12pt}
-
-                    \begin{equation}
-                        \frac{\delta^2 L(W)}{\delta W^2} = - \sum_{i=1}^N \left( \frac{\exp (w_i^T x_i)}{\sum\limits_{i'=1}^N \exp (w_{i'}^T x_i)} x_i x_i^T \right)
-                    \end{equation}
-
-                    \vspace{12pt}
-
-                    As the hessian matrix is positive semi-definite, the objective function is convex. This means that the optimization problem has a single global minimum.
 
                     \vspace{12pt}
 
@@ -285,7 +168,7 @@ def update_weight(self, x_i, y_i, learning_rate):
               \label{tab:logistic_regression-20}
           \end{table}
 
-          The traning loss and validation accuracy plots for a learning rate of $\eta = 0.001$, $\eta = 0.01$ and $\eta = 0.1$ are depicted in Figures \ref{fig:q2-logistic_regression-training-loss-batch-16-lr-0.001-epochs-20-l2-0.0-opt-sgd}, \ref{fig:q2-logistic_regression-validation-accuracy-batch-16-lr-0.001-epochs-20-l2-0.0-opt-sgd}, \ref{fig:q2-logistic_regression-training-loss-batch-16-lr-0.01-epochs-20-l2-0.0-opt-sgd}, \ref{fig:q2-logistic_regression-validation-accuracy-batch-16-lr-0.01-epochs-20-l2-0.0-opt-sgd}, \ref{fig:q2-logistic_regression-training-loss-batch-16-lr-0.1-epochs-20-l2-0.0-opt-sgd} and \ref{fig:q2-logistic_regression-validation-accuracy-batch-16-lr-0.1-epochs-20-l2-0.0-opt-sgd}, respectively.
+          The traning loss and validation accuracy plots for a learning rate of $\eta = 0.001$ are depicted in Figures \ref{fig:q2-logistic_regression-training-loss-batch-16-lr-0.001-epochs-20-l2-0.0-opt-sgd} and \ref{fig:q2-logistic_regression-validation-accuracy-batch-16-lr-0.001-epochs-20-l2-0.0-opt-sgd}, respectively.
 
           \begin{figure}[H]
               \centering
@@ -299,34 +182,6 @@ def update_weight(self, x_i, y_i, learning_rate):
               \includesvg[width=0.75\textwidth]{./1/report/assets/q2-logistic_regression-validation-accuracy-batch-16-lr-0.001-epochs-20-l2-0.0-opt-sgd}
               \caption{Logistic regression validation accuracy for a learning rate of $\eta = 0.001$.}
               \label{fig:q2-logistic_regression-validation-accuracy-batch-16-lr-0.001-epochs-20-l2-0.0-opt-sgd}
-          \end{figure}
-
-          \begin{figure}[H]
-              \centering
-              \includesvg[width=0.75\textwidth]{./1/report/assets/q2-logistic_regression-training-loss-batch-16-lr-0.01-epochs-20-l2-0.0-opt-sgd}
-              \caption{Logistic regression training loss for a learning rate of $\eta = 0.01$.}
-              \label{fig:q2-logistic_regression-training-loss-batch-16-lr-0.01-epochs-20-l2-0.0-opt-sgd}
-          \end{figure}
-
-          \begin{figure}[H]
-              \centering
-              \includesvg[width=0.75\textwidth]{./1/report/assets/q2-logistic_regression-validation-accuracy-batch-16-lr-0.01-epochs-20-l2-0.0-opt-sgd}
-              \caption{Logistic regression validation accuracy for a learning rate of $\eta = 0.01$.}
-              \label{fig:q2-logistic_regression-validation-accuracy-batch-16-lr-0.01-epochs-20-l2-0.0-opt-sgd}
-          \end{figure}
-
-          \begin{figure}[H]
-              \centering
-              \includesvg[width=0.75\textwidth]{./1/report/assets/q2-logistic_regression-training-loss-batch-16-lr-0.1-epochs-20-l2-0.0-opt-sgd}
-              \caption{Logistic regression training loss for a learning rate of $\eta = 0.1$.}
-              \label{fig:q2-logistic_regression-training-loss-batch-16-lr-0.1-epochs-20-l2-0.0-opt-sgd}
-          \end{figure}
-
-          \begin{figure}[H]
-              \centering
-              \includesvg[width=0.75\textwidth]{./1/report/assets/q2-logistic_regression-validation-accuracy-batch-16-lr-0.1-epochs-20-l2-0.0-opt-sgd}
-              \caption{Logistic regression validation accuracy for a learning rate of $\eta = 0.1$.}
-              \label{fig:q2-logistic_regression-validation-accuracy-batch-16-lr-0.1-epochs-20-l2-0.0-opt-sgd}
           \end{figure}
 
           \vspace{12pt}
@@ -375,6 +230,22 @@ def update_weight(self, x_i, y_i, learning_rate):
                         \label{tab:mlp-batch-size-time}
                     \end{table}
 
+                    The train and validation losses for a batch size of $16$ and a batch size of $1024$ are depicted in Figures \ref{fig:q2-mlp-training-loss-batch-16-lr-0.1-epochs-20-hidden-200-dropout-0.0-l2-0.0-layers-2-act-relu-opt-sgd} and \ref{fig:q2-mlp-training-loss-batch-1024-lr-0.1-epochs-20-hidden-200-dropout-0.0-l2-0.0-layers-2-act-relu-opt-sgd}, respectively.
+
+                    \begin{figure}[H]
+                        \centering
+                        \includesvg[width=0.75\textwidth]{./1/report/assets/q2-mlp-training-loss-batch-16-lr-0.1-epochs-20-hidden-200-dropout-0.0-l2-0.0-layers-2-act-relu-opt-sgd}
+                        \caption{MLP train and validation losses for a batch size of 16.}
+                        \label{fig:q2-mlp-training-loss-batch-16-lr-0.1-epochs-20-hidden-200-dropout-0.0-l2-0.0-layers-2-act-relu-opt-sgd}
+                    \end{figure}
+
+                    \begin{figure}[H]
+                        \centering
+                        \includesvg[width=0.75\textwidth]{./1/report/assets/q2-mlp-training-loss-batch-1024-lr-0.1-epochs-20-hidden-200-dropout-0.0-l2-0.0-layers-2-act-relu-opt-sgd}
+                        \caption{MLP train and validation losses for a batch size of 1024.}
+                        \label{fig:q2-mlp-training-loss-batch-1024-lr-0.1-epochs-20-hidden-200-dropout-0.0-l2-0.0-layers-2-act-relu-opt-sgd}
+                    \end{figure}
+
                     \vspace{12pt}
 
               \item \textit{Train the model with learning rates: 1, 0.1, 0.01 and 0.001 with the remaining
@@ -400,37 +271,23 @@ def update_weight(self, x_i, y_i, learning_rate):
                         \label{tab:mlp-learning-rate-accuracy}
                     \end{table}
 
-                    The train and validations losses for the configurations with $\eta = 1$ and $\eta = 0.1$ are depicted in Figures \ref{fig:q2-mlp-training-loss-batch-16-lr-1.0-epochs-20-l2-0.0-opt-sgd}, \ref{fig:q2-mlp-validation-accuracy-batch-16-lr-1.0-epochs-20-l2-0.0-opt-sgd}, \ref{fig:q2-mlp-training-loss-batch-16-lr-0.1-epochs-20-l2-0.0-opt-sgd} and \ref{fig:q2-mlp-validation-accuracy-batch-16-lr-0.1-epochs-20-l2-0.0-opt-sgd}, respectively.
+                    The train and validations losses for the configurations with $\eta = 1$ and $\eta = 0.1$ are depicted in Figures \ref{fig:q2-mlp-training-loss-batch-16-lr-1.0-epochs-20-l2-0.0-opt-sgd} and \ref{fig:q2-mlp-training-loss-batch-16-lr-0.1-epochs-20-l2-0.0-opt-sgd}, respectively.
 
                     \begin{figure}[H]
                         \centering
                         \includesvg[width=0.75\textwidth]{./1/report/assets/q2-mlp-training-loss-batch-16-lr-1.0-epochs-20-hidden-200-dropout-0.0-l2-0.0-layers-2-act-relu-opt-sgd}
-                        \caption{MLP training loss for a learning rate of $\eta = 1.0$.}
+                        \caption{MLP train and validation losses for a learning rate of $\eta = 1.0$.}
                         \label{fig:q2-mlp-training-loss-batch-16-lr-1.0-epochs-20-l2-0.0-opt-sgd}
                     \end{figure}
 
                     \begin{figure}[H]
                         \centering
-                        \includesvg[width=0.75\textwidth]{./1/report/assets/q2-mlp-validation-accuracy-batch-16-lr-1.0-epochs-20-hidden-200-dropout-0.0-l2-0.0-layers-2-act-relu-opt-sgd}
-                        \caption{MLP validation accuracy for a learning rate of $\eta = 1.0$.}
-                        \label{fig:q2-mlp-validation-accuracy-batch-16-lr-1.0-epochs-20-l2-0.0-opt-sgd}
-                    \end{figure}
-
-                    \begin{figure}[H]
-                        \centering
                         \includesvg[width=0.75\textwidth]{./1/report/assets/q2-mlp-training-loss-batch-16-lr-0.1-epochs-20-hidden-200-dropout-0.0-l2-0.0-layers-2-act-relu-opt-sgd}
-                        \caption{MLP training loss for a learning rate of $\eta = 0.1$.}
+                        \caption{MLP train and validation losses for a learning rate of $\eta = 0.1$.}
                         \label{fig:q2-mlp-training-loss-batch-16-lr-0.1-epochs-20-l2-0.0-opt-sgd}
                     \end{figure}
 
-                    \begin{figure}[H]
-                        \centering
-                        \includesvg[width=0.75\textwidth]{./1/report/assets/q2-mlp-validation-accuracy-batch-16-lr-0.1-epochs-20-hidden-200-dropout-0.0-l2-0.0-layers-2-act-relu-opt-sgd}
-                        \caption{MLP validation accuracy for a learning rate of $\eta = 0.1$.}
-                        \label{fig:q2-mlp-validation-accuracy-batch-16-lr-0.1-epochs-20-l2-0.0-opt-sgd}
-                    \end{figure}
-
-                    The performance
+                    The model is more performant with a learning rate of $\eta = 0.1$. With a large learning rate ($\eta = 1$) or with a small learning rate ($\eta = 0.001$), the model takes longer to train.
 
                     \begin{table}[H]
                         \centering
@@ -440,7 +297,7 @@ def update_weight(self, x_i, y_i, learning_rate):
                             1             & 238            \\ \hline
                             0.1           & 201            \\ \hline
                             0.01          & 221            \\ \hline
-                            0.01          & 235            \\ \hline
+                            0.001         & 235            \\ \hline
                         \end{tabular}
                         \caption{Training time of the MLP for each learning rate.}
                         \label{tab:mlp-learning-rate-time}
@@ -479,34 +336,20 @@ def update_weight(self, x_i, y_i, learning_rate):
 
                     \vspace{12pt}
 
-                    The train and validation losses for the configurations with a batch size of 256, a L2 regularization parameter of 0.0001 and a dropout probability of 0.2 are depicted in Figures \ref{fig:q2-mlp-training-loss-batch-256-lr-0.01-epochs-150-hidden-200-dropout-0.0-l2-0.0-layers-2-act-relu-opt-sgd}, \ref{fig:q2-mlp-validation-accuracy-batch-256-lr-0.01-epochs-150-hidden-200-dropout-0.0-l2-0.0-layers-2-act-relu-opt-sgd}, \ref{fig:q2-mlp-training-loss-batch-256-lr-0.01-epochs-150-hidden-200-dropout-0.2-l2-0.0-layers-2-act-relu-opt-sgd} and \ref{fig:q2-mlp-validation-accuracy-batch-256-lr-0.01-epochs-150-hidden-200-dropout-0.2-l2-0.0-layers-2-act-relu-opt-sgd}, respectively.
+                    The train and validation losses for the configuration with a batch size of 256 and the configuration with a dropout probability of 0.2 are depicted in Figures \ref{fig:q2-mlp-training-loss-batch-256-lr-0.01-epochs-150-hidden-200-dropout-0.0-l2-0.0-layers-2-act-relu-opt-sgd} and \ref{fig:q2-mlp-training-loss-batch-256-lr-0.01-epochs-150-hidden-200-dropout-0.2-l2-0.0-layers-2-act-relu-opt-sgd}, respectively.
 
                     \begin{figure}[H]
                         \centering
                         \includesvg[width=0.75\textwidth]{./1/report/assets/q2-mlp-training-loss-batch-256-lr-0.1-epochs-150-hidden-200-dropout-0.0-l2-0.0-layers-2-act-relu-opt-sgd}
-                        \caption{MLP training loss for the default model.}
+                        \caption{MLP train and validation losses for the default model, with a batch size of 256.}
                         \label{fig:q2-mlp-training-loss-batch-256-lr-0.01-epochs-150-hidden-200-dropout-0.0-l2-0.0-layers-2-act-relu-opt-sgd}
                     \end{figure}
 
                     \begin{figure}[H]
                         \centering
-                        \includesvg[width=0.75\textwidth]{./1/report/assets/q2-mlp-validation-accuracy-batch-256-lr-0.1-epochs-150-hidden-200-dropout-0.0-l2-0.0-layers-2-act-relu-opt-sgd}
-                        \caption{MLP validation accuracy for the default model.}
-                        \label{fig:q2-mlp-validation-accuracy-batch-256-lr-0.01-epochs-150-hidden-200-dropout-0.0-l2-0.0-layers-2-act-relu-opt-sgd}
-                    \end{figure}
-
-                    \begin{figure}[H]
-                        \centering
                         \includesvg[width=0.75\textwidth]{./1/report/assets/q2-mlp-training-loss-batch-256-lr-0.1-epochs-150-hidden-200-dropout-0.2-l2-0.0-layers-2-act-relu-opt-sgd}
-                        \caption{MLP training loss for a dropout probability of 0.2.}
+                        \caption{MLP train and validation losses for a dropout probability of 0.2.}
                         \label{fig:q2-mlp-training-loss-batch-256-lr-0.01-epochs-150-hidden-200-dropout-0.2-l2-0.0-layers-2-act-relu-opt-sgd}
-                    \end{figure}
-
-                    \begin{figure}[H]
-                        \centering
-                        \includesvg[width=0.75\textwidth]{./1/report/assets/q2-mlp-validation-accuracy-batch-256-lr-0.1-epochs-150-hidden-200-dropout-0.2-l2-0.0-layers-2-act-relu-opt-sgd}
-                        \caption{MLP validation accuracy for a dropout probability of 0.2.}
-                        \label{fig:q2-mlp-validation-accuracy-batch-256-lr-0.01-epochs-150-hidden-200-dropout-0.2-l2-0.0-layers-2-act-relu-opt-sgd}
                     \end{figure}
           \end{enumerate}
 \end{enumerate}
@@ -515,12 +358,12 @@ def update_weight(self, x_i, y_i, learning_rate):
 
 \begin{enumerate}[leftmargin=\labelsep]
     \item \textit{In this exercise, you will design a multilayer perceptron to compute a Boolean function of $D$ variables, $f; \{-1, +1\}^D \mapsto \{-1, +1\}$, defined as:}
-          \begin{equation}
+          \begin{equation*}
               f(x) = \begin{cases}
-                  +1 & \text{if } \sum\limits_{i=1}^D x_i \geq 0 \\
+                  +1 & \text{if } \sum\limits_{i=1}^D x_i \in [A, B], \\
                   -1 & \text{otherwise}
               \end{cases}
-          \end{equation}
+          \end{equation*}
           \textit{where $A$ and $B$ are integers such that $-D \leq A \leq B \leq D$.}
 
           \begin{enumerate}[label=\alph*)]
@@ -543,8 +386,6 @@ def update_weight(self, x_i, y_i, learning_rate):
                         \end{tabular}
                     \end{table}
 
-                    \vspace{12pt}
-
                     A single perceptron can only learn linearly separable functions. As the XOR function is not linearly separable, it cannot be learned by a single perceptron, as there is no hyperplane that can separate the two classes, as suggested by Figure \ref{fig:xor}.
 
                     \begin{figure}[H]
@@ -558,7 +399,18 @@ def update_weight(self, x_i, y_i, learning_rate):
 
 
 
-              \item \textit{}
+              \item \textit{Show that the function above can be computed with a multilayer perceptron with a single hidden layer with two hidden units and hard threshold activations $g: \mathcal{R} \rightarrow \{-1, +1\}$ with}
+                    \begin{equation*}
+                        g(z) = \text{sign}(z) = \begin{cases}
+                            +1 & \text{if } z \geq 0 \\
+                            -1 & \text{otherwise}
+                        \end{cases}
+                    \end{equation*}
+                    \textit{and where \textbf{all the weights and biases are integers} (positive, negative, or zero).Provide all the weights and biases of such network, and ensure that the resulting network is robust to infinitesimal perturbation of the inputs, i.e., the resulting function $h: \mathcal{R}^D \rightarrow \mathcal{R}$ should be such that $\lim\limits_{t \rightarrow 0} h(x + tv) = h(x) = f(x)$ for any $x \in \{-1, +1\}$ and $v \in \mathcal{R}^D$.}
+
+                    \vspace{12pt}
+
+
 
               \item \textit{}
           \end{enumerate}
