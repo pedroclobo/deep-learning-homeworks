@@ -439,18 +439,58 @@
                     \vspace{12pt}
 
 
-              \item \textit{Show that the function above can be computed with a multilayer perceptron with a single hidden layer with two hidden units and hard threshold activations $g: \mathcal{R} \rightarrow \{-1, +1\}$ with}
+              \item \textit{Show that the function above can be computed with a multilayer perceptron with a single hidden layer with two hidden units and hard threshold activations $g: \mathbb{R} \rightarrow \{-1, +1\}$ with}
                     \begin{equation*}
                         g(z) = \text{sign}(z) = \begin{cases}
                             +1 & \text{if } z \geq 0 \\
                             -1 & \text{otherwise}
                         \end{cases}
                     \end{equation*}
-                    \textit{and where \textbf{all the weights and biases are integers} (positive, negative, or zero).Provide all the weights and biases of such network, and ensure that the resulting network is robust to infinitesimal perturbation of the inputs, i.e., the resulting function $h: \mathcal{R}^D \rightarrow \mathcal{R}$ should be such that $\lim\limits_{t \rightarrow 0} h(x + tv) = h(x) = f(x)$ for any $x \in \{-1, +1\}$ and $v \in \mathcal{R}^D$.}
+                    \textit{and where \textbf{all the weights and biases are integers} (positive, negative, or zero).Provide all the weights and biases of such network, and ensure that the resulting network is robust to infinitesimal perturbation of the inputs, i.e., the resulting function $h: \mathbb{R}^D \rightarrow \mathbb{R}$ should be such that $\lim\limits_{t \rightarrow 0} h(x + tv) = h(x) = f(x)$ for any $x \in \{-1, +1\}$ and $v \in \mathbb{R}^D$.}
 
                     \vspace{12pt}
 
+                    Considering $D$ = 2, $A$ = -1 and $B$ = 1, the function $f(x)$ is mapped into the XOR function. The two hyperplanes given by the equations $x_1 + x_2 = -1$ and $x_1 + x_2 = 1$ separate the two classes, as suggested by Figure \ref{fig:xor-separated}.
 
+                    \begin{figure}[H]
+                        \centering
+                        \includesvg[width=0.75\textwidth]{./1/report/assets/xor-separated.svg}
+                        \caption{Plot of function $f$ with $D$ = 2, $A$ = -1 and $B$ = 1. Red points represent the class -1, while blue points represent the class 1. The points between the two hyperplanes are classified as 1, while the points outside the two hyperplanes are classified as -1.}
+                        \label{fig:xor-separated}
+                    \end{figure}
+
+                    In general, for any $D$, $A$ and $B$ such that $-D \leq A \leq B \leq D$, the two hyperplanes that separate the two classes are given by the equations
+
+                    \begin{equation}
+                        \sum\limits_{i=1}^D x_i = A
+                    \end{equation}
+
+                    \begin{equation}
+                        \sum\limits_{i=1}^D x_i = B
+                    \end{equation}
+
+                    \vspace{12pt}
+
+                    The following weights and biases for the hidden layer and output layer allow the network to learn the function $f(x)$:
+
+                    \begin{equation}
+                        \begin{gathered}
+                            W^{(1)} = \begin{bmatrix}
+                                1 & \dots & 1 \\
+                                1 & \dots & 1
+                            \end{bmatrix} \text{ with dimensions }(2 \times D) \\
+                            b^{(1)} = \begin{bmatrix}
+                                B \\
+                                A
+                            \end{bmatrix}                                     \\
+                            W^{(2)} = \begin{bmatrix}
+                                1 & -1
+                            \end{bmatrix} \\
+                            b^{(2)} = \begin{bmatrix}
+                                -1
+                            \end{bmatrix}
+                        \end{gathered}
+                    \end{equation}
 
               \item \textit{}
           \end{enumerate}
