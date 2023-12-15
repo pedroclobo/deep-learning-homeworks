@@ -70,12 +70,42 @@
 
                     \vspace{12pt}
 
-                    The resulting test accuracy for the perceptron is 0.3422. The train and validation accuracies are depicted in Figure \ref{fig:perceptron-20-1.0}.
+                    The resulting test accuracy for the perceptron is 0.3422. The train and validation accuracies in each epoch are depicted in Table \ref{tab:perceptron-20-1.0}. The train and validation accuracies are depicted in Figure \ref{fig:perceptron-20-1.0}.
+
+                    \begin{table}[H]
+                        \centering
+                        \begin{tabular}{|c|c|c|}
+                            \hline
+                            \textbf{Epoch} & \textbf{Train Acc} & \textbf{Validation Acc} \\ \hline
+                            1              & 0.5118             & 0.5103                  \\ \hline
+                            2              & 0.4635             & 0.4573                  \\ \hline
+                            3              & 0.6308             & 0.6329                  \\ \hline
+                            4              & 0.3407             & 0.3408                  \\ \hline
+                            5              & 0.4342             & 0.4285                  \\ \hline
+                            6              & 0.5988             & 0.6018                  \\ \hline
+                            7              & 0.5679             & 0.5650                  \\ \hline
+                            8              & 0.6379             & 0.6353                  \\ \hline
+                            9              & 0.5988             & 0.5992                  \\ \hline
+                            10             & 0.5399             & 0.5367                  \\ \hline
+                            11             & 0.5582             & 0.5596                  \\ \hline
+                            12             & 0.4041             & 0.4035                  \\ \hline
+                            13             & 0.5813             & 0.5804                  \\ \hline
+                            14             & 0.6054             & 0.6074                  \\ \hline
+                            15             & 0.5916             & 0.5884                  \\ \hline
+                            16             & 0.5556             & 0.5509                  \\ \hline
+                            17             & 0.5752             & 0.5798                  \\ \hline
+                            18             & 0.5937             & 0.5961                  \\ \hline
+                            19             & 0.4873             & 0.4831                  \\ \hline
+                            20             & 0.4654             & 0.4610                  \\ \hline
+                        \end{tabular}
+                        \caption{Perceptron train and validation accuracies in each epoch.}
+                        \label{tab:perceptron-20-1.0}
+                    \end{table}
 
                     \begin{figure}[H]
                         \centering
                         \includesvg[width=0.75\textwidth]{./1/report/assets/q1-perceptron-20-1.0.svg}
-                        \caption{Perceptron train and test accuracies as a function of the epoch number.}
+                        \caption{Perceptron train and validation accuracies as a function of the epoch number.}
                         \label{fig:perceptron-20-1.0}
                     \end{figure}
 
@@ -140,13 +170,20 @@
 
                     \vspace{12pt}
 
-                    For a learning rate of $\eta = 0.001$, the resulting test accuracy for the MLP is 0.6106. The correspondant train and validation accuracies are depicted in Figure \ref{fig:mlp-20-0.001}.
+                    For a learning rate of $\eta = 0.001$, the resulting test accuracy for the MLP is 0.6106. The correspondant train and validation accuracies are depicted in Figure \ref{fig:mlp-20-0.001}, while the train loss is depicted in Figure \ref{fig:mlp-20-0.001-loss}.
 
                     \begin{figure}[H]
                         \centering
                         \includesvg[width=0.75\textwidth]{./1/report/assets/q1-mlp-20-0.001.svg}
                         \caption{MLP train and validation accuracies as a function of the epoch number for $\eta = 0.001$.}
                         \label{fig:mlp-20-0.001}
+                    \end{figure}
+
+                    \begin{figure}[H]
+                        \centering
+                        \includesvg[width=0.75\textwidth]{./1/report/assets/q1-mlp-loss-20-0.001.svg}
+                        \caption{MLP train loss as a function of the epoch number for $\eta = 0.001$.}
+                        \label{fig:mlp-20-0.001-loss}
                     \end{figure}
 
                     \vspace{12pt}
@@ -165,35 +202,39 @@
 
           \vspace{12pt}
 
-          The best configuration, in term of final validation accuracy, is $\eta = 0.001$, as shown in Table \ref{tab:logistic_regression-20}.
+          The best configuration, in term of final validation accuracy, is $\eta = 0.01$, as shown in Table \ref{tab:logistic_regression-20}.
 
           \begin{table}[H]
               \centering
               \begin{tabular}{|c|c|}
                   \hline
-                  Learning rate & Validation accuracy \\ \hline
-                  0.001         & 0.6503              \\ \hline
-                  0.01          & 0.6200              \\ \hline
-                  0.1           & 0.5577              \\ \hline
+                  \textbf{Learning Rate} & \textbf{Validation Accuracy} \\ \hline
+                  0.001                  & 0.6163                       \\ \hline
+                  0.01                   & 0.6535                       \\ \hline
+                  0.1                    & 0.6224                       \\ \hline
               \end{tabular}
               \caption{Final logistic regression validation accuracy for each learning rate.}
               \label{tab:logistic_regression-20}
           \end{table}
 
-          The traning loss and validation accuracy plots for a learning rate of $\eta = 0.001$ are depicted in Figures \ref{fig:q2-logistic_regression-training-loss-batch-16-lr-0.001-epochs-20-l2-0.0-opt-sgd} and \ref{fig:q2-logistic_regression-validation-accuracy-batch-16-lr-0.001-epochs-20-l2-0.0-opt-sgd}, respectively.
+          For the configuration with a learning rate of $\eta = 0.01$, the final accuracy on the test set is 0.6200.
+
+          \vspace{12pt}
+
+          The traning loss and validation accuracy plots for a learning rate of $\eta = 0.01$ are depicted in Figures \ref{fig:q2-logistic_regression-training-loss-batch-16-lr-0.01-epochs-20-l2-0.0-opt-sgd} and \ref{fig:q2-logistic_regression-validation-accuracy-batch-16-lr-0.01-epochs-20-l2-0.0-opt-sgd}, respectively.
 
           \begin{figure}[H]
               \centering
               \includesvg[width=0.7\textwidth]{./1/report/assets/q2-logistic_regression-training-loss-batch-16-lr-0.001-epochs-20-l2-0.0-opt-sgd}
-              \caption{Logistic regression training loss for a learning rate of $\eta = 0.001$.}
-              \label{fig:q2-logistic_regression-training-loss-batch-16-lr-0.001-epochs-20-l2-0.0-opt-sgd}
+              \caption{Logistic regression training loss for a learning rate of $\eta = 0.01$.}
+              \label{fig:q2-logistic_regression-training-loss-batch-16-lr-0.01-epochs-20-l2-0.0-opt-sgd}
           \end{figure}
 
           \begin{figure}[H]
               \centering
-              \includesvg[width=0.7\textwidth]{./1/report/assets/q2-logistic_regression-validation-accuracy-batch-16-lr-0.001-epochs-20-l2-0.0-opt-sgd}
-              \caption{Logistic regression validation accuracy for a learning rate of $\eta = 0.001$.}
-              \label{fig:q2-logistic_regression-validation-accuracy-batch-16-lr-0.001-epochs-20-l2-0.0-opt-sgd}
+              \includesvg[width=0.7\textwidth]{./1/report/assets/q2-logistic_regression-validation-accuracy-batch-16-lr-0.01-epochs-20-l2-0.0-opt-sgd}
+              \caption{Logistic regression validation accuracy for a learning rate of $\eta = 0.01$.}
+              \label{fig:q2-logistic_regression-validation-accuracy-batch-16-lr-0.01-epochs-20-l2-0.0-opt-sgd}
           \end{figure}
 
           \vspace{12pt}
@@ -217,7 +258,7 @@
                   L2 Regularization       & 0.0            \\ \hline
                   Optimizer               & SGD            \\ \hline
               \end{tabular}
-              \caption{Default hyperparameters and training/model design choices for the MLP.}
+              \caption{Default hyperparameters.}
               \label{tab:mlp-default}
           \end{table}
 
@@ -294,23 +335,39 @@
 
                     \vspace{12pt}
 
-                    The best and worst configuration, with regard to the test accuracy, are $\eta = 1$ and $\eta = 0.1$, respectively, as shown in Table \ref{tab:mlp-learning-rate-accuracy}.
+                    The best and worst configuration, with regard to the validation accuracy, are $\eta = 1$ and $\eta = 0.1$, respectively, as shown in Table \ref{tab:mlp-learning-rate-validation-accuracy}.
 
                     \begin{table}[H]
                         \centering
                         \begin{tabular}{|c|c|}
                             \hline
-                            Learning rate & Test accuracy \\ \hline
-                            1             & 0.4726        \\ \hline
-                            0.1           & 0.7713        \\ \hline
-                            0.01          & 0.7543        \\ \hline
-                            0.001         & 0.6900        \\ \hline
+                            \textbf{Learning Rate} & \textbf{Validation Accuracy} \\ \hline
+                            1                      & 0.4721                       \\ \hline
+                            0.1                    & 0.8094                       \\ \hline
+                            0.01                   & 0.8004                       \\ \hline
+                            0.001                  & 0.6685                       \\ \hline
+                        \end{tabular}
+                        \caption{Validation accuracy of the MLP for each learning rate.}
+                        \label{tab:mlp-learning-rate-validation-accuracy}
+                    \end{table}
+
+                    The best configuration, regarding test accuracy, is $\eta = 0.1$, as shown in Table \ref{tab:mlp-learning-rate-accuracy}.
+
+                    \begin{table}[H]
+                        \centering
+                        \begin{tabular}{|c|c|}
+                            \hline
+                            \textbf{Learning Rate} & \textbf{Test Accuracy} \\ \hline
+                            1                      & 0.4726                 \\ \hline
+                            0.1                    & 0.7713                 \\ \hline
+                            0.01                   & 0.7543                 \\ \hline
+                            0.001                  & 0.6900                 \\ \hline
                         \end{tabular}
                         \caption{Test accuracy of the MLP for each learning rate.}
                         \label{tab:mlp-learning-rate-accuracy}
                     \end{table}
 
-                    The train and validations losses for the configurations with $\eta = 1$ and $\eta = 0.1$ are depicted in Figures \ref{fig:q2-mlp-training-loss-batch-16-lr-1.0-epochs-20-l2-0.0-opt-sgd} and \ref{fig:q2-mlp-training-loss-batch-16-lr-0.1-epochs-20-l2-0.0-opt-sgd}, respectively.
+                    The train and validation losses for the configurations with $\eta = 1$ and $\eta = 0.1$ are depicted in Figures \ref{fig:q2-mlp-training-loss-batch-16-lr-1.0-epochs-20-l2-0.0-opt-sgd} and \ref{fig:q2-mlp-training-loss-batch-16-lr-0.1-epochs-20-l2-0.0-opt-sgd}, respectively.
 
                     \begin{figure}[H]
                         \centering
@@ -326,7 +383,7 @@
                         \label{fig:q2-mlp-training-loss-batch-16-lr-0.1-epochs-20-l2-0.0-opt-sgd}
                     \end{figure}
 
-                    The models with a very large or very small learning rate exhibit worst test accuracy.
+                    The models with a very large or very small learning rate exhibit worst test accuracies.
 
                     \vspace{12pt}
 
@@ -352,21 +409,35 @@
 
                     \vspace{12pt}
 
-                    The best and worst configuration with regard to the validation accuracy are the default model (with a batch size of 256) and the model with a dropout probability $= 0.001$, respectively, as shown in Table \ref{tab:mlp-configuration-accuracy}.
+                    The worst and best configuration with regard to the validation accuracy are the default model (with a batch size of 256) and the model with a dropout probability $= 0.001$, respectively, as shown in Table \ref{tab:mlp-configuration-accuracy}.
 
                     \begin{table}[H]
                         \centering
                         \begin{tabular}{|c|c|}
                             \hline
-                            Model                                & Test accuracy \\ \hline
-                            Default with batch size = 256        & 0.7713        \\ \hline
-                            L2 regularization parameter = 0.0001 & 0.7788        \\ \hline
-                            Dropout probability = 0.2            & 0.7996        \\ \hline
+                            \textbf{Model}                       & \textbf{Validation Accuracy} \\ \hline
+                            Default with batch size = 256        & 0.8340                       \\ \hline
+                            L2 regularization parameter = 0.0001 & 0.8269                       \\ \hline
+                            Dropout probability = 0.2            & 0.8445                       \\ \hline
                         \end{tabular}
-                        \caption{Final MLP test accuracy for one of the models.}
+                        \caption{Final MLP validation accuracy for one of the models.}
                         \label{tab:mlp-configuration-accuracy}
                     \end{table}
 
+                    The best configuration, regarding test accuracy, is the configuration with dropout, as shown in Table \ref{tab:mlp-configuration-test-accuracy}.
+
+                    \begin{table}[H]
+                        \centering
+                        \begin{tabular}{|c|c|}
+                            \hline
+                            \textbf{Model}                       & \textbf{Test Accuracy} \\ \hline
+                            Default with batch size = 256        & 0.7713                 \\ \hline
+                            L2 regularization parameter = 0.0001 & 0.7788                 \\ \hline
+                            Dropout probability = 0.2            & 0.7996                 \\ \hline
+                        \end{tabular}
+                        \caption{Final MLP test accuracy for one of the models.}
+                        \label{tab:mlp-configuration-test-accuracy}
+                    \end{table}
 
                     The train and validation losses for the configuration with a batch size of 256 and the configuration with a dropout probability of 0.2 are depicted in Figures \ref{fig:q2-mlp-training-loss-batch-256-lr-0.01-epochs-150-hidden-200-dropout-0.0-l2-0.0-layers-2-act-relu-opt-sgd} and \ref{fig:q2-mlp-training-loss-batch-256-lr-0.01-epochs-150-hidden-200-dropout-0.2-l2-0.0-layers-2-act-relu-opt-sgd}, respectively.
 
