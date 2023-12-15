@@ -145,6 +145,8 @@ class MLP(object):
         return n_correct / n_possible
 
     def train_epoch(self, X, y, learning_rate=0.001):
+        loss = 0
+
         for x_i, y_i in zip(X, y):
             y_i_hat = self.predict(x_i)
 
@@ -154,7 +156,9 @@ class MLP(object):
             self.backward(x_i, y_i_one_hot)
             self.update_weights(learning_rate)
 
-        return self.loss(y_i_hat, y_i_one_hot)
+            loss += self.loss(y_i_hat, y_i_one_hot)
+
+        return loss / y.shape[0]
 
 
 def plot(epochs, train_accs, val_accs):
