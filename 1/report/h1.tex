@@ -74,8 +74,8 @@
 
                     \begin{figure}[H]
                         \centering
-                        \includesvg[width=0.8\textwidth]{./1/report/assets/q1-perceptron-20-1.0.svg}
-                        \caption{Perceptron train and testing accuracies as a function of the epoch number.}
+                        \includesvg[width=0.75\textwidth]{./1/report/assets/q1-perceptron-20-1.0.svg}
+                        \caption{Perceptron train and test accuracies as a function of the epoch number.}
                         \label{fig:perceptron-20-1.0}
                     \end{figure}
 
@@ -108,13 +108,13 @@
           \begin{enumerate}[label=\alph*)]
 
               \item \textit{Comment the following claim: “A logistic regression model using pixel values
-                        as features is not as expressive as a multi-layer perceptron using ReLU activations.
+                        as features is not as expressive as a multi-layer perceptron using \texttt{ReLU} activations.
                         However, training a logistic regression model is easier because it is a convex optimization
                         problem.” Is this true of false? Justify.}
 
                     \vspace{12pt}
 
-                    The claim is correct. The following paragraphs address the expressiveness of the models and their optimization problems. \\
+                    The claim is correct. The following two paragraphs address the expressiveness of the models and their optimization problems, respectively.
 
                     \vspace{12pt}
 
@@ -122,7 +122,7 @@
 
                     \vspace{12pt}
 
-                    Despite being more expressive, a multi-layer perceptron using ReLU activations is harder to train than a logistic regression model. This is due to the fact that the optimization problem of the former is non-convex, while the optimization problem of the latter is convex. This means that the optimization problem of a logistic regression model has a single global minimum, while the optimization problem of a multi-layer perceptron using ReLU activations has multiple local minima. While training the multi-layer perceptron with a gradient descent algorithm, the model can get \textit{stuck} on a local minimum. This makes it harder to find the optimal solution for the latter model.
+                    Despite being more expressive, a multi-layer perceptron using ReLU activations is harder to train than a logistic regression model. This is due to the fact that the optimization problem of the former is non-convex, while the optimization problem of the latter is convex. This means that the optimization problem of a logistic regression model has a single global minimum, while the optimization problem of a multi-layer perceptron using ReLU activations, in general, can have multiple local minima. While training the multi-layer perceptron with a gradient descent algorithm, the model can get \textit{stuck} on a local minimum. This makes it harder to find the optimal solution for the latter model.
 
                     \vspace{12pt}
 
@@ -184,14 +184,14 @@
 
           \begin{figure}[H]
               \centering
-              \includesvg[width=0.75\textwidth]{./1/report/assets/q2-logistic_regression-training-loss-batch-16-lr-0.001-epochs-20-l2-0.0-opt-sgd}
+              \includesvg[width=0.7\textwidth]{./1/report/assets/q2-logistic_regression-training-loss-batch-16-lr-0.001-epochs-20-l2-0.0-opt-sgd}
               \caption{Logistic regression training loss for a learning rate of $\eta = 0.001$.}
               \label{fig:q2-logistic_regression-training-loss-batch-16-lr-0.001-epochs-20-l2-0.0-opt-sgd}
           \end{figure}
 
           \begin{figure}[H]
               \centering
-              \includesvg[width=0.75\textwidth]{./1/report/assets/q2-logistic_regression-validation-accuracy-batch-16-lr-0.001-epochs-20-l2-0.0-opt-sgd}
+              \includesvg[width=0.7\textwidth]{./1/report/assets/q2-logistic_regression-validation-accuracy-batch-16-lr-0.001-epochs-20-l2-0.0-opt-sgd}
               \caption{Logistic regression validation accuracy for a learning rate of $\eta = 0.001$.}
               \label{fig:q2-logistic_regression-validation-accuracy-batch-16-lr-0.001-epochs-20-l2-0.0-opt-sgd}
           \end{figure}
@@ -200,7 +200,26 @@
 
     \item \textit{Implement a feed-forward neural network using dropout regularization. Make
               sure to include all the hyperparameters and training/model design choices shown in Table
-              1. Use the values presented in the table as default}
+                  {\ref{tab:mlp-default}}. Use the values presented in the table as default.}
+
+          \begin{table}[H]
+              \centering
+              \begin{tabular}{|c|c|}
+                  \hline
+                  \textbf{Hyperparameter} & \textbf{Value} \\ \hline
+                  Number of Epochs        & 20             \\ \hline
+                  Learning Rate           & 0.1            \\ \hline
+                  Hidden Size             & 200            \\ \hline
+                  Number of Layers        & 2              \\ \hline
+                  Dropout                 & 0.0            \\ \hline
+                  Batch Size              & 16             \\ \hline
+                  Activation              & ReLU           \\ \hline
+                  L2 Regularization       & 0.0            \\ \hline
+                  Optimizer               & SGD            \\ \hline
+              \end{tabular}
+              \caption{Default hyperparameters and training/model design choices for the MLP.}
+              \label{tab:mlp-default}
+          \end{table}
 
           \begin{enumerate}[label=\alph*)]
               \item \textit{Compare the performance of your model with batch sizes 16 and 1024 with
@@ -210,7 +229,7 @@
 
                     \vspace{12pt}
 
-                    The configuration with a batch size of 16 has the best final testing accuracy, as shown in Table \ref{tab:mlp-batch-size-accuracy}.
+                    The configuration with a batch size of 16 has the best final test accuracy, as shown in Table \ref{tab:mlp-batch-size-accuracy}.
 
                     \vspace{12pt}
 
@@ -258,6 +277,14 @@
                         \label{fig:q2-mlp-training-loss-batch-1024-lr-0.1-epochs-20-hidden-200-dropout-0.0-l2-0.0-layers-2-act-relu-opt-sgd}
                     \end{figure}
 
+                    The model with a batch size of 16 takes longer to train. This is due to the fact that the gradient computed for each batch is more \textit{noisy} (it is less aligned with the true gradient) than the gradient computed for a batch size of 1024. This means that the stochastic gradient descent algorithm takes longer to converge as it takes more steps to reach the optimal solution. A larger batch size leads to a more accurate estimate of the gradient, which leads to a faster convergence of the stochastic gradient descent algorithm and a faster training time.
+
+                    The plot of the train and validation losses for a batch size of 1024 shows a smoother training process. This is also indicative of a more accurate gradient computation for each batch.
+
+                    \vspace{12pt}
+
+                    The model with a batch size of 16 has a higher test accuracy, relative to the model with a batch size of 1024. This is due to the fact that a small batch size can restrict the training of the model, as it introduces more variety into the training process. This can lead to a better generalization of the model, as it is more robust to unseen data, avoiding overfitting. Models less prone to overfitting show better performance on the test set.
+
                     \vspace{12pt}
 
               \item \textit{Train the model with learning rates: 1, 0.1, 0.01 and 0.001 with the remaining
@@ -267,19 +294,19 @@
 
                     \vspace{12pt}
 
-                    The best and worst configuration, with regard to the testing accuracy, are $\eta = 1$ and $\eta = 0.1$, respectively, as shown in Table \ref{tab:mlp-learning-rate-accuracy}.
+                    The best and worst configuration, with regard to the test accuracy, are $\eta = 1$ and $\eta = 0.1$, respectively, as shown in Table \ref{tab:mlp-learning-rate-accuracy}.
 
                     \begin{table}[H]
                         \centering
                         \begin{tabular}{|c|c|}
                             \hline
-                            Learning rate & Testing accuracy \\ \hline
-                            1             & 0.4726           \\ \hline
-                            0.1           & 0.7713           \\ \hline
-                            0.01          & 0.7543           \\ \hline
-                            0.001         & 0.6900           \\ \hline
+                            Learning rate & Test accuracy \\ \hline
+                            1             & 0.4726        \\ \hline
+                            0.1           & 0.7713        \\ \hline
+                            0.01          & 0.7543        \\ \hline
+                            0.001         & 0.6900        \\ \hline
                         \end{tabular}
-                        \caption{Testing accuracy of the MLP for each learning rate.}
+                        \caption{Test accuracy of the MLP for each learning rate.}
                         \label{tab:mlp-learning-rate-accuracy}
                     \end{table}
 
@@ -299,21 +326,21 @@
                         \label{fig:q2-mlp-training-loss-batch-16-lr-0.1-epochs-20-l2-0.0-opt-sgd}
                     \end{figure}
 
-                    The model is more performant with a learning rate of $\eta = 0.1$. With a large learning rate ($\eta = 1$) or with a small learning rate ($\eta = 0.001$), the model takes longer to train.
+                    The models with a very large or very small learning rate exhibit worst test accuracy.
 
-                    \begin{table}[H]
-                        \centering
-                        \begin{tabular}{|c|c|}
-                            \hline
-                            Learning rate & Time (seconds) \\ \hline
-                            1             & 238            \\ \hline
-                            0.1           & 201            \\ \hline
-                            0.01          & 221            \\ \hline
-                            0.001         & 235            \\ \hline
-                        \end{tabular}
-                        \caption{Training time of the MLP for each learning rate.}
-                        \label{tab:mlp-learning-rate-time}
-                    \end{table}
+                    \vspace{12pt}
+
+                    A small learning rate can introduce problems into the training process. Some problems include a slow convergence of the stochastic gradient descent algorithm and a higher chance of getting stuck in a local minimum. As the learning rate is small, the model takes \textit{little steps} taking a lot of training epochs to reach the optimal solution.
+
+                    \vspace{12pt}
+
+                    On the other hand, a large learning rate can lead to an overshooting of the optimal solution, as the model takes \textit{big steps} in the direction of the gradient. This can lead to the model \textit{bouncing} around the optimal solution, but never reaching it.
+
+                    \vspace{12pt}
+
+                    Models that have a learning rate that is nor too small nor too large mitigate some of this problems, displaying a better test accuracy.
+
+                    \vspace{12pt}
 
               \item \textit{Using a batch size of 256 run the default model for 150 epochs. Is there
                         overfitting?
@@ -340,13 +367,6 @@
                         \label{tab:mlp-configuration-accuracy}
                     \end{table}
 
-                    The configurations differ as the default model doesn't have any regularization technique, while the model with a dropout probability of 0.2 uses dropout regularization. The random drop of certain connections forces the network to learn a more robust representation of the data, as it cannot rely on the presence of a particular unit.
-
-                    \vspace{12pt}
-
-                    The presence of a regularization technique leads to lower variations of the validation accuracy and validation loss between epochs. It also translates into a higher testing loss at the cost of a lower validation loss. As the model is more restricted in the training process, it is more capable of generalizing for unseen data. The presence of dropout reguluzation reduces overfitting.
-
-                    \vspace{12pt}
 
                     The train and validation losses for the configuration with a batch size of 256 and the configuration with a dropout probability of 0.2 are depicted in Figures \ref{fig:q2-mlp-training-loss-batch-256-lr-0.01-epochs-150-hidden-200-dropout-0.0-l2-0.0-layers-2-act-relu-opt-sgd} and \ref{fig:q2-mlp-training-loss-batch-256-lr-0.01-epochs-150-hidden-200-dropout-0.2-l2-0.0-layers-2-act-relu-opt-sgd}, respectively.
 
@@ -363,6 +383,15 @@
                         \caption{MLP train and validation losses for a dropout probability of 0.2.}
                         \label{fig:q2-mlp-training-loss-batch-256-lr-0.01-epochs-150-hidden-200-dropout-0.2-l2-0.0-layers-2-act-relu-opt-sgd}
                     \end{figure}
+
+                    The configurations differ as the default model doesn't have any regularization technique, while the model with a dropout probability of 0.2 uses dropout regularization. The random drop of certain connections forces the network to learn a more robust representation of the data, as it cannot rely on the presence of a particular unit.
+
+                    \vspace{12pt}
+
+                    The presence of a regularization technique leads to lower variations of the validation accuracy and validation loss between epochs. It also translates into a higher test loss at the cost of a lower validation loss. As the model is more restricted in the training process, it is more capable of generalizing for unseen data. The presence of dropout regularization reduces overfitting.
+
+                    \vspace{12pt}
+
           \end{enumerate}
 \end{enumerate}
 
@@ -402,13 +431,12 @@
 
                     \begin{figure}[H]
                         \centering
-                        \includesvg[width=0.8\textwidth]{./1/report/assets/xor.svg}
+                        \includesvg[width=0.75\textwidth]{./1/report/assets/xor.svg}
                         \caption{Plot of function $f$ with $D$ = 2, $A$ = -1 and $B$ = 1. Red points represent the class -1, while blue points represent the class 1. The two classes are not linearly separable.}
                         \label{fig:xor}
                     \end{figure}
 
                     \vspace{12pt}
-
 
 
               \item \textit{Show that the function above can be computed with a multilayer perceptron with a single hidden layer with two hidden units and hard threshold activations $g: \mathcal{R} \rightarrow \{-1, +1\}$ with}
