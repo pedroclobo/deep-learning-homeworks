@@ -1,0 +1,162 @@
+\documentclass[12pt]{article}
+\usepackage[paper=letterpaper,margin=2cm]{geometry}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{amsfonts}
+\usepackage{newtxtext, newtxmath}
+\usepackage{enumitem}
+\usepackage{titling}
+\usepackage[colorlinks=true]{hyperref}
+\usepackage{multirow}
+\usepackage{svg}
+\usepackage{listings}
+\usepackage{xcolor}
+\usepackage{float}
+\usepackage{graphicx}
+\usepackage{ragged2e}
+\usepackage{subcaption}
+
+\setlength{\droptitle}{-6em}
+
+\definecolor{codegreen}{rgb}{0,0.6,0}
+\definecolor{codegray}{rgb}{0.5,0.5,0.5}
+\definecolor{codepurple}{rgb}{0.58,0,0.82}
+\definecolor{backcolour}{rgb}{0.95,0.95,0.92}
+
+\lstdefinestyle{mystyle}{
+    basicstyle=\ttfamily\footnotesize,
+    breakatwhitespace=false,
+    breaklines=true,
+    captionpos=b,
+    commentstyle=\color{codegreen},
+    keepspaces=true,
+    keywordstyle=\color{magenta},
+    numbers=left,
+    numbersep=5pt,
+    numberstyle=\tiny\color{codegray},
+    showspaces=false,
+    showstringspaces=false,
+    showtabs=false,
+    stringstyle=\color{codepurple},
+    tabsize=4
+}
+
+\lstset{style=mystyle}
+
+\title{\large{Deep Learning 2023}\vskip 0.2cm Homework 2 -- Group 48}
+\date{}
+\author{Miguel Vale (99113) \and Pedro Lobo (99115)}
+\begin{document}
+\maketitle
+
+\center\large{\vskip -1.0cm\textbf{Contribution}}
+
+\begin{justify}
+\end{justify}
+
+\center\large{\vskip 0.5cm\textbf{Question 1}}
+\begin{enumerate}[leftmargin=\labelsep]
+
+    \item
+
+    \item
+
+    \item
+
+    \item
+
+\end{enumerate}
+
+\vspace{12pt}
+
+\center\large{\textbf{Question 2}}
+\center\textbf{Image classification with CNNs}
+
+\begin{enumerate}[leftmargin=\labelsep]
+
+    \item \textit{Implement a simple convolutional network. Train your model for 15 epochs using SGD tuning only the learning rate on your validation data, using the following values: $0.1$, $0.01$, $0.001$. Report the learning rate of best configuration and plot two things: the training loss and the validation accuracy, both as a function of the epoch number.}
+
+          \vspace{12pt}
+
+          The best configuration, in terms of test accuracy, has a learning rate of $\eta = 0.01$, as shown in Table \ref{tab:cnn-pool-test-acc}.
+
+          \begin{table}[H]
+              \centering
+              \begin{tabular}{|c|c|}
+                  \hline
+                  \textbf{Learning Rate} & \textbf{Test Accuracy} \\ \hline
+                  0.1                    & 0.7864                 \\ \hline
+                  0.01                   & 0.8318                 \\ \hline
+                  0.001                  & 0.7864                 \\ \hline
+              \end{tabular}
+              \caption{Final CNN test accuracies for each learning rate.}
+              \label{tab:cnn-pool-test-acc}
+          \end{table}
+
+          The training loss and validation accuracy for the best configuration are plotted in Figures \ref{fig:cnn-training-loss-0.01-0.7-0-sgd-false} and \ref{fig:cnn-validation-accuracy-0.01-0.7-0-sgd-false}, respectively.
+
+          \begin{figure}[H]
+              \centering
+              \includesvg[width=0.75\textwidth]{./2/report/assets/CNN-training-loss-0.01-0.7-0-sgd-False.svg}
+              \caption{Training loss as a function of the epoch number for $\eta = 0.01$.}
+              \label{fig:cnn-training-loss-0.01-0.7-0-sgd-false}
+          \end{figure}
+
+          \begin{figure}[H]
+              \centering
+              \includesvg[width=0.75\textwidth]{./2/report/assets/CNN-validation-accuracy-0.01-0.7-0-sgd-False.svg}
+              \caption{Validation accuracy as a function of the epoch number for $\eta = 0.01$.}
+              \label{fig:cnn-validation-accuracy-0.01-0.7-0-sgd-false}
+          \end{figure}
+
+    \item \textit{Implement and asses a similar network but where the max-pooling layers were removed and \texttt{self.conv1} and \texttt{self.conv2} are different. \texttt{self.conv1} is a convolution layer with 8 output channels, a kernel of size 3x3, padding of 1 and stride of 2, and \texttt{self.conv2} is a convolution layer with 16 output channels, a kernel of size 3x3, padding of 0, and stride of 2. Modify the \texttt{\_\_init\_\_} and the forward functions to use the \texttt{no\_maxpool} variable and ensure the ability to switch between current and previous definitions of the \texttt{self.conv1} and \texttt{self.conv2} layers and application or not of the max-pooling layer. Report the performance of this network using the optimal hyper-parameters defined in the previous question.}
+
+          \vspace{12pt}
+
+          The best configuration, with the pooling layers removed, in terms of test accuracy, has a learning rate of $\eta = 0.01$, as shown in Table \ref{tab:cnn-test-acc}.
+
+          \begin{table}[H]
+              \centering
+              \begin{tabular}{|c|c|}
+                  \hline
+                  \textbf{Learning Rate} & \textbf{Test Accuracy} \\ \hline
+                  0.1                    & 0.7580                 \\ \hline
+                  0.01                   & 0.7958                 \\ \hline
+                  0.001                  & 0.7127                 \\ \hline
+              \end{tabular}
+              \caption{Final CNN (with no pooling layers) test accuracies for each learning rate.}
+              \label{tab:cnn-test-acc}
+          \end{table}
+
+          The training loss and validation accuracy for the best configuration without pooling layers are plotted in Figures \ref{fig:cnn-training-loss-0.01-0.7-0-sgd-true} and \ref{fig:cnn-validation-accuracy-0.01-0.7-0-sgd-true}, respectively.
+
+          \begin{figure}[H]
+              \centering
+              \includesvg[width=0.75\textwidth]{./2/report/assets/CNN-training-loss-0.01-0.7-0-sgd-True.svg}
+              \caption{Training loss as a function of the epoch number for $\eta = 0.01$.}
+              \label{fig:cnn-training-loss-0.01-0.7-0-sgd-true}
+          \end{figure}
+
+          \begin{figure}[H]
+              \centering
+              \includesvg[width=0.75\textwidth]{./2/report/assets/CNN-validation-accuracy-0.01-0.7-0-sgd-True.svg}
+              \caption{Validation accuracy as a function of the epoch number for $\eta = 0.01$.}
+              \label{fig:cnn-validation-accuracy-0.01-0.7-0-sgd-true}
+          \end{figure}
+
+    \item \textit{Implement the function \texttt{get\_number\_trainable\_params} to determine the number of trainable parameters of CNNs from the two previous questions. What justifies the difference in terms of performance between the networks?}
+
+          \vspace{12pt}
+
+          The number of trainable parameters for both the CNNs with the max pooling layres and the CNNs without the max pooling layers is $224892$.
+
+          \vspace{12pt}
+
+          The difference in performance between the two network may be justified by the fact that max pooling layers aggregate the information from the previous convolutional layer in a way that is invariant to small translations, rotation and scales of the input. This means that the network with the max pooling layers is more robust to small changes to the input, which is useful for image classification tasks, like the one at hand, conferring the models with pooling layers a better performance.
+
+\end{enumerate}
+
+\center\large{\textbf{Question 3}}
+\center\textbf{Automatic Speech Recognition}
+
+\end{document}

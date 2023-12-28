@@ -20,37 +20,61 @@ class CNN(nn.Module):
     def __init__(self, dropout_prob, no_maxpool=False):
         super(CNN, self).__init__()
         self.no_maxpool = no_maxpool
-        if not no_maxpool:
-            # Implementation for Q2.1
-            raise NotImplementedError
-        else:
-            # Implementation for Q2.2
-            raise NotImplementedError
 
-        # Implementation for Q2.1 and Q2.2
-        raise NotImplementedError
+        if not no_maxpool:
+            self.conv1 = nn.Conv2d(1, 8, (3, 3), stride=1, padding=1)
+
+            self.conv2 = nn.Conv2d(8, 16, (3, 3), stride=1, padding=0)
+
+            self.max_pool = nn.MaxPool2d((2, 2), stride=2)
+
+            self.fc1 = nn.Linear(16 * 6 * 6, 320)
+
+        else:
+            self.conv1 = nn.Conv2d(1, 8, (3, 3), padding=1, stride=2)
+
+            self.conv2 = nn.Conv2d(8, 16, (3, 3), padding=0, stride=2)
+
+        assert(dropout_prob == 0.7)
+        self.drop = nn.Dropout(dropout_prob)
+
+        # output dimension is always 6
+        self.fc1 = nn.Linear(16 * 6 * 6, 320)
+        self.fc2 = nn.Linear(320, 120)
+        self.fc3 = nn.Linear(120, 4)
 
     def forward(self, x):
+        x = x.view(x.shape[0], 1, 28, 28)
+
         # input should be of shape [b, c, w, h]
         # conv and relu layers
+        x = self.conv1(x)
+        x = F.relu(x)
 
         # max-pool layer if using it
         if not self.no_maxpool:
-            raise NotImplementedError
+            x = self.max_pool(x)
 
         # conv and relu layers
-
+        x = self.conv2(x)
+        x = F.relu(x)
 
         # max-pool layer if using it
         if not self.no_maxpool:
-            raise NotImplementedError
+            x = self.max_pool(x)
 
         # prep for fully connected layer + relu
+        x = x.view(-1, 16 * 6 * 6)
+
+        x = self.fc1(x)
+        x = F.relu(x)
 
         # drop out
         x = self.drop(x)
 
         # second fully connected layer + relu
+        x = self.fc2(x)
+        x = F.relu(x)
 
         # last fully connected layer
         x = self.fc3(x)
@@ -102,8 +126,7 @@ def plot(epochs, plottable, ylabel='', name=''):
 
 
 def get_number_trainable_params(model):
-    ## TO IMPLEMENT - REPLACE return 0
-    return 0
+    return sum(p.numel() for p in model.parameters() if p.requires_grad)
 
 
 def main():
