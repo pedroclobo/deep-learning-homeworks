@@ -57,13 +57,74 @@
 \center\large{\vskip 0.5cm\textbf{Question 1}}
 \begin{enumerate}[leftmargin=\labelsep]
 
-    \item
+    \item \textit{Consider the self-attention layer of a transformer with a single attention head, which performs the computation $\mathbf{Z}$ = $\text{Softmax}(\mathbf{QK^T})\mathbf{V}$, where $\mathbf{Q} \in \mathbb{R}^{L \times D}$, $\mathbf{K} \in \mathbb{R}^{L \times D}$, $\mathbf{V} \in \mathbb{R}^{L \times D}$, for a long sequence length $L$ and hidden size $D$. What is the computation complexity, in terms of L, of computing $\mathbf{Z}$? Briefly explain why this could be problematic for long sequences.}
 
-    \item
+          \vspace{12pt}
 
-    \item
+          Each line of the matrix $\mathbf{Q}$ is multiplied by each line of the matrix $\mathbf{K}$, with each multiplication being a operation of size $D$. So, the total cost of the matrix multiplication is $\mathcal{O} (L \times L \times D)$.
 
-    \item
+          \vspace{12pt}
+
+          Then, the softmax function is applied to each element of the resulting matrix, which has size $L \times L$.
+
+          \vspace{12pt}
+
+          Finally, the matrix $\mathbf{V} \in \mathbb{R}^{L \times D}$ is multiplied by the resulting matrix $\in \mathbb{R}^{L \times D}$, which as a cost of $\mathcal{O}(L^2D)$.
+
+          \vspace{12pt}
+
+          So, the total cost of computing $\mathbb{Z}$ is $\mathcal{O} (L^2 D)$.
+
+          \vspace{12pt}
+
+          This is problematic for long sequences because the cost of computing $\mathbb{Z}$ grows quadratically with the length of the sequence, which means that the time and space required to compute $\mathbb{Z}$ for longer sequences grows very quickly.
+
+    \item \textit{We will show that by suitably approximating the softmax transformation the computational complexity above can be reduced. Consider the McLaurin series expansion for the exponential function,}
+          \begin{equation*}
+              exp(t) = \sum_{n=0}^{\infty} \frac{t^n}{n!} = 1 + t + \frac{t^2}{2!} + \frac{t^3}{6} + \dots
+          \end{equation*}
+          \textit{Using only the first three terms in this series, we obtain $\text{exp}(t) \approx 1 + t + \frac{t^2}{2}$. Use this approximation to obtain a feature map $\phi: \mathbb{R}^D \rightarrow \mathbb{R}^M$ such that, for arbitrary $\textbf{q} \in \mathbb{R}^D$ and, $\textbf{k} \in \mathbb{R}^D$, we have $\text{exp}(\textbf{q}^T\textbf{k}) \approx \phi(\textbf{q})^T\phi(\textbf{k})$. Express the dimensionality of the feature space $M$ as a function of $D$. What would be the dimensionality if you used $K \ge 3$ terms in the McLaurin series expansion (as a function of $D$ and $K$)?}
+
+          \vspace{12pt}
+
+          $M = 1 + D + \frac{D \times (D - 1)}{2}$, where 1 is a constant term, $D$ is linear to the number of features and $\frac{D \times (D - 1)}{2}$ is the number of possible combinations of two features, only excluding the combinations of a feature with itself.
+
+          \vspace{12pt}
+
+          If $K \ge 3$, $t^{k-1}$ will include all the features up to $k-1$, so
+          \begin{equation}
+              M = \sum_{i}^{k-1} {D + k - 1 \choose k}
+          \end{equation}
+          Therefore,
+          \begin{equation}
+              M = \sum_{i}^{k-1} \frac{(D + i - 1)!}{i!(D - 1)!} = 1 + \frac{D!}{(D-1)!}
+          \end{equation}
+
+    \item \textit{Using the approximation $\text{exp}(\textbf{q}^Tk) \approx \phi(\textbf{q})^T \phi(\textbf{k})$, and denoting by $\Phi({\textbf{Q}}) \in \mathbb{R}^{L \times M}$ and $\Phi({\textbf{K}}) \in \mathbb{R}^{L \times M}$ the matrices whose rows are (respectively) $\phi(\textbf{k}_i)$, where $\textbf{q}_i$ and $\textbf{k}_i$ denote (also respectively) the $\text{i}^{\text{th}}$ rows of the original matrices $\textbf{Q}$ and $\textbf{K}$, show that the self-attention operation can be approximated as $\mathbf{Z} \approx \mathbf{D}^{-1}\Phi({\textbf{Q}})\Phi({\textbf{K}})^T\mathbf{V}$, where $\mathbf{D} = \textbf{Diag}(\Phi({\textbf{Q}})\Phi({\textbf{K}})^T\mathbf{1}_L)$ (here, $\textbf{Diag}(v)$ denotes a matrix with the entries of vector $v$ in the diagonal, and $\mathbf{1}_L$ denotes a vector of of ones with size of length $L$).}
+
+          \vspace{12pt}
+
+          As vector $v$ is the product between $\Phi(\textbf{Q})$ and $\Phi(\textbf{K})^T$, it is a vector where each entry is the sum of the correspondent line in $\Phi(\textbf{Q})\Phi(\textbf{K})$.
+
+          \vspace{12pt}
+
+          The diagonal matrix $\textbf{Diag}(v) \in \mathbb{R}^{L \times L}$ is a matrix with the vector $v$ in the diagonal. As the matrix is diagonal, its inverse can be calculated by taking the inverse of each of the elements in the diagonal. So, $D^{-1} \Phi(\textbf{Q}) \Phi(\textbf{K})^T$ will work as a softmax function, as the inverse of the sum of the elements in each line of the matrix will be multiplied by the correspondent line of $\Phi(\textbf{Q}) \Phi(\textbf{K})^T$.
+
+          \vspace{12pt}
+
+          \begin{equation}
+              \text{Softmax}(\textbf{QK}^T)\textbf{V} = \frac{e^{\textbf{QK}^T}}{\sum e^{\textbf{QK}^T}} \cdot \textbf{V} \approx D^{-1} \Phi(\textbf{Q}) \Phi(\textbf{K})^T \textbf{V}
+          \end{equation}
+
+    \item \textit{Show how we can exploit the above approximation to obtain a computational complexity which is linear in $L$. How does the computational complexity depend on $M$ and $D$?}
+
+          \vspace{12pt}
+
+          $\textbf{Q} \in \mathbb{R}^{L \times D}$ and $\phi: \mathbb{R}^D \rightarrow \mathbb{R}^M$, so $\phi(\textbf{q}_i) \mapsto \Phi(\textbf{Q}) \in \mathbb{R}^{L \times M}$, which means that the computational complexity is in the order of $\mathcal{O}(L \times D \times M)$, which is linear in $L$.
+
+          \vspace{12pt}
+
+          As $M << D$, the computational cost of $\mathbb{O}(L^2M)$ is much smaller than $\mathbb{O}(L^2D)$.
 
 \end{enumerate}
 
