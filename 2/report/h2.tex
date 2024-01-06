@@ -52,6 +52,11 @@
 \center\large{\vskip -1.0cm\textbf{Contribution}}
 
 \begin{justify}
+    We started by dividing the coding part of this homework by the two of us. Questions 2 was done by Pedro while question 3 was done by Miguel. Although we distributed this questions between the both of us, we double-checked each other's implementation.
+
+    Question 1 was tackled by the two of us.
+
+    The report was written by the two of us, with each of us writing the answers to the questions that we implemented and then reviewed by the other.
 \end{justify}
 
 \center\large{\vskip 0.5cm\textbf{Question 1}}
@@ -219,5 +224,139 @@
 
 \center\large{\textbf{Question 3}}
 \center\textbf{Automatic Speech Recognition}
+
+\begin{enumerate}[leftmargin=\labelsep]
+
+    \item \textit{For the LSTM, plot the comparison of the training and validation loss over epochs and the string similarity scores obtained in the validation set. Also, report the final test loss and the string similarity scores obtained with the test set.}
+
+          \vspace{12pt}
+
+          The comparison of the training and validation losses over epochs are plotted in Figure \ref{fig:attention-rnn-loss-comparison} while the Jaccard, cosine and Damerau-Levenshtein string similarity scores obtained in the validation set are represented, respectively, in Figures \ref{fig:attention-rnn-jaccard}, \ref{fig:attention-rnn-cosine} and \ref{fig:attention-rnn-damerau-levenshtein}.
+
+          \begin{figure}[H]
+              \centering
+              \includesvg[width=0.75\textwidth]{./2/report/assets/attention-rnn_loss__train_val.svg}
+              \caption{Training and validation losses over epochs of the LSTM.}
+              \label{fig:attention-rnn-loss-comparison}
+          \end{figure}
+
+          \begin{figure}[H]
+              \centering
+              \includesvg[width=0.75\textwidth]{./2/report/assets/attention-rnn_jaccard_similarity__val.svg}
+              \caption{Jaccard similarity scores in the validation set over epochs of the LSTM.}
+              \label{fig:attention-rnn-jaccard}
+          \end{figure}
+
+          \begin{figure}[H]
+              \centering
+              \includesvg[width=0.75\textwidth]{./2/report/assets/attention-rnn_cosine_similarity__val.svg}
+              \caption{Cosine similarity scores in the validation set over epochs of the LSTM.}
+              \label{fig:attention-rnn-cosine}
+          \end{figure}
+
+          \begin{figure}[H]
+              \centering
+              \includesvg[width=0.75\textwidth]{./2/report/assets/attention-rnn_damerau-levenshtein_similarity__val.svg}
+              \caption{Damerau-Levenshtein similarity scores in the validation set over epochs of the LSTM.}
+              \label{fig:attention-rnn-damerau-levenshtein}
+          \end{figure}
+
+          The final test loss is $1.1828277518109578$. The string similarity scores obtained with the test set are depicted in Table \ref{tab:attention-rnn-test-scores}.
+
+          \vspace{12pt}
+
+          \begin{table}[H]
+              \centering
+              \begin{tabular}{|c|c|}
+                  \hline
+                  \textbf{String Similarity Metric} & \textbf{Score}     \\ \hline
+                  Jaccard                           & 0.714888785108462  \\ \hline
+                  Cosine                            & 0.8323868545583469 \\ \hline
+                  Damerau-Levenshtein               & 0.5086983165244969 \\ \hline
+              \end{tabular}
+              \caption{String similarity score of the LSTM.}
+              \label{tab:attention-rnn-test-scores}
+          \end{table}
+
+    \item \textit{For the attention mechanism, plot the comparison of the training and validation loss over epochs and the string similarity scores obtained in the validation set. Also, report the final test loss and the string similarity scores obtained with the test set.}
+
+          \vspace{12pt}
+
+          The comparison of the training and validation losses over epochs are plotted in Figure \ref{fig:attention-attention-loss-comparison} while the Jaccard, cosine and Damerau-Levenshtein string similarity scores obtained in the validation set are represented, respectively, in Figures \ref{fig:attention-attention-jaccard}, \ref{fig:attention-attention-cosine} and \ref{fig:attention-attention-damerau-levenshtein}.
+
+          \begin{figure}[H]
+              \centering
+              \includesvg[width=0.75\textwidth]{./2/report/assets/attention-attention_loss__train_val.svg}
+              \caption{Training and validation losses over epochs of the attention mechanism.}
+              \label{fig:attention-attention-loss-comparison}
+          \end{figure}
+
+          \begin{figure}[H]
+              \centering
+              \includesvg[width=0.75\textwidth]{./2/report/assets/attention-attention_jaccard_similarity__val.svg}
+              \caption{Jaccard similarity scores in the validation set over epochs of the attention mechanism.}
+              \label{fig:attention-attention-jaccard}
+          \end{figure}
+
+          \begin{figure}[H]
+              \centering
+              \includesvg[width=0.75\textwidth]{./2/report/assets/attention-attention_cosine_similarity__val.svg}
+              \caption{Cosine similarity scores in the validation set over epochs of the attention mechanism.}
+              \label{fig:attention-attention-cosine}
+          \end{figure}
+
+          \begin{figure}[H]
+              \centering
+              \includesvg[width=0.75\textwidth]{./2/report/assets/attention-attention_damerau-levenshtein_similarity__val.svg}
+              \caption{Damerau-Levenshtein similarity scores in the validation set over epochs of the attention mechanism.}
+              \label{fig:attention-attention-damerau-levenshtein}
+          \end{figure}
+
+          \vspace{12pt}
+
+          The final test loss is $1.1603884776917899$. The string similarity scores obtained with the test set are depicted in Table \ref{tab:attention-attention-test-scores}.
+
+          \begin{table}[H]
+              \centering
+              \begin{tabular}{|c|c|}
+                  \hline
+                  \textbf{String Similarity Metric} & \textbf{Score}     \\ \hline
+                  Jaccard                           & 0.7644286566881149  \\ \hline
+                  Cosine                            & 0.865211054644348 \\ \hline
+                  Damerau-Levenshtein               & 0.6329973770804788 \\ \hline
+              \end{tabular}
+              \caption{String similarity score of the attention mechanism.}
+              \label{tab:attention-attention-test-scores}
+          \end{table}
+
+    \item \textit{Comment on the differences in the test results obtained using the decoder architectures in questions 1 and 2. Note: start by illustrating how the LSTM (in question 1) and the attention mechanism (in question 2) process the text input.}
+
+          \vspace{12pt}
+
+          LSTMs have a memory cell that allows them to capture long-term dependencies in the input sequence. They use gates to control the flow of information into and out of the cell, making them capable of learning and retaining information over extended periods.
+
+          The attention mechanism allows the model to selectively focus on different parts of the input sequence when generating each element of the output sequence. Attention helps the model selectively attend to relevant information, providing a dynamic way to weigh the importance of different parts of the input sequence at each step of decoding.
+
+          The attention mechanism outperforms the LSTM as it is better processing long sequences and capturing textual dependencies. On the other hand, the LSTM needs to \textit{remember} past information, which is not as efficient as the attention mechanism.
+
+    \item \textit{Comment on the score values obtained by each string similarity score used. Why each score has different values based on what each similarity tries to evaluate?}
+
+          \vspace{12pt}
+
+          The different score values arise from the distinct characteristics and underlying principles of each similarity metric. The more appropriate metric depends on the use case.
+
+          \vspace{12pt}
+
+          Jaccard similarity compares the intersection of two sets to their union. The resulting value, ranging from 0 to 1, represents the proportion of shared elements between the sets.
+
+          \vspace{12pt}
+
+          Cosine similarity measures the cosine of the angle between two vectors that represent the two strings.
+
+          \vspace{12pt}
+
+          Damerau-Levenshtein similarity quantifies the similarity between two strings based on the minimum number of edit operations (insertions, deletions, substitutions, and transpositions) needed to transform one string into the other.
+
+\end{enumerate}
 
 \end{document}
